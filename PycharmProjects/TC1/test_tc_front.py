@@ -1,15 +1,17 @@
 # Main class of the output window.
 from enum import Enum
 import matplotlib as mpl
+from matplotlib import pyplot as plt
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
-from graphwidget import GraphWidget
+from PycharmProjects.TC1.graphwidget import GraphWidget
 
 
 class GraphManager:
-    def __init__(self):
+    def __init__(self, mainWindow):
+        self.parent = mainWindow
         self.graphicToShow = {}
         self.transferenceModuleKey = "transferenceModule"
         self.spiceModuleKey = "spiceModule"
@@ -33,8 +35,45 @@ class GraphManager:
             self.remove_graphic(self.spiceModuleKey)
             self.remove_graphic(self.spicePhaseKey)
         else:
-            i = 0
+            options = QFileDialog.Options()
+            options |= QFileDialog.DontUseNativeDialog
+            files, _ = QFileDialog.getOpenFileNames(self.parent, "Select LTSpice plots", "C://",
+                                                    "Text Files (*.txt)")
+            if files:
+                data = self.__parse_ltspice_txt_file(files)
+                for graph in data:
+                    self.add_graphic(GraphValues("Modulo", graph[0], graph[1], GraphTypes.BodeModule), self.spiceModuleKey)
+                    self.add_graphic(GraphValues("Fase", graph[0], graph[2], GraphTypes.BodePhase), self.spicePhaseKey)
+
             self.draw()
+
+    def __parse_ltspice_txt_file(self, files):
+        try:
+            data = []
+            for filename in files:
+                file = open(filename, "r")
+                if file.mode is not "r":
+                    print("ERROR")
+                    exit()
+                lines = file.readlines()
+                del lines[0]
+                f = []
+                amp = []
+                phase = []
+                for string in lines:
+                    frec, value = string.split()
+                    amp_, phase_ = value[1:-2].split(',')
+                    f.append(float(frec))
+                    amp.append(float(amp_[:-2]))
+                    phase.append(float(phase_))
+                data.append((f, amp, phase))
+                file.close()
+            return data
+
+        except IOError:
+            print("File not found")
+        except ValueError:
+            print("Invalid file loaded")
 
     def __med_button_graph__(self):
         if (len(self.graphicToShow) > 0) and (self.medModuleKey in self.graphicToShow.keys()):
@@ -90,7 +129,7 @@ class OutputGraphics(QMainWindow):
         loadUi("tcDesign.ui", self)
         self.setWindowTitle("Salida")
         self.graphics = None
-        self.graphManager = GraphManager()
+        self.graphManager = GraphManager(self)
         self.transfButton.clicked.connect(self.graphManager.__trans_button_graph__)
         self.spiceButton.clicked.connect(self.graphManager.__spice_button_graph__)
         self.medButton.clicked.connect(self.graphManager.__med_button_graph__)
