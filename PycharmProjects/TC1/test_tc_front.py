@@ -13,123 +13,11 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
 
-
-class GraphManager:
-    def __init__(self, mainWindow):
-        self.graphicToShow = {}
-        self.parent = mainWindow
-        self.transferenceModuleKey = "transferenceModule"
-        self.spiceModuleKey = "spiceModule"
-        self.medModuleKey = "measurementModule"
-        self.transferencePhaseKey = "transferencePhase"
-        self.spicePhaseKey = "spicePhase"
-        self.medPhaseKey = "measeurementPhase"
-
-    def add_graphic(self, graphic_value, key):
-        self.graphicToShow[key] = graphic_value
-
-    def remove_graphic(self, key):
-        self.graphicToShow.pop(key)
-
-    def remove_all_graphics(self):
-        self.graphicToShow.clear()
-        self.draw()
-
-    def __spice_button_graph__(self):
-        if (len(self.graphicToShow) > 0) and (self.spiceModuleKey in self.graphicToShow.keys()):
-            self.remove_graphic(self.spiceModuleKey)
-            self.remove_graphic(self.spicePhaseKey)
-        else:
-            options = QFileDialog.Options()
-            options |= QFileDialog.DontUseNativeDialog
-            files, _ = QFileDialog.getOpenFileNames(self.parent, "Select LTSpice plots", "C://",
-                                                    "Text Files (*.txt)")
-            if files:
-                data = self.__parse_ltspice_txt_file(files)
-                for graph in data:
-                    self.add_graphic(GraphValues("Modulo", graph[0], graph[1], GraphTypes.BodeModule),
-                                     self.spiceModuleKey)
-                    self.add_graphic(GraphValues("Fase", graph[0], graph[2], GraphTypes.BodePhase), self.spicePhaseKey)
-
-            self.draw()
-
-    def __parse_ltspice_txt_file(self, files):
-        try:
-            data = []
-            for filename in files:
-                file = open(filename, "r")
-                if file.mode is not "r":
-                    print("ERROR")
-                    exit()
-                lines = file.readlines()
-                del lines[0]
-                f = []
-                amp = []
-                phase = []
-                for string in lines:
-                    frec, value = string.split()
-                    amp_, phase_ = value[1:-2].split(',')
-                    f.append(float(frec))
-                    amp.append(float(amp_[:-2]))
-                    phase.append(float(phase_))
-                data.append((f, amp, phase))
-                file.close()
-            return data
-
-        except IOError:
-            print("File not found")
-        except ValueError:
-            print("Invalid file loaded")
+from PycharmProjects.TC1.GraphManager import GraphManager
+from PycharmProjects.TC1.GraphValues import GraphTypes
 
 
-    def __med_button_graph__(self):
-        if (len(self.graphicToShow) > 0) and (self.medModuleKey in self.graphicToShow.keys()):
-            self.remove_graphic(self.medModuleKey)
-            self.remove_graphic(self.medPhaseKey)
-            self.draw()
-        else:
-            a = [22110, 345, 310, 28, 75, 2827, 120]
-            b = [60, -70, 80, 90, 65, 87, 77]
-            c = [10, 50, 564, 565, 5205, 5454, 222, 4000, 84444, 95512155, 578786786, 867867868768]
-            d = [20, 45, -5434, 100, -24, 174, 788, 555, 800, 1050, 9999, 400]
-            e = [20, 20, 85, 85, -40, -280, 252]
-            f = [60, -60, 80, -80, 64, 55, 22]
-
-            graphic5 = GraphValues("Bode Phase", c, d, GraphTypes.BodePhase)
-            graphic4 = GraphValues("Bode Module", a, b, GraphTypes.BodeModule)
-            self.add_graphic(graphic4, self.medModuleKey)
-            self.add_graphic(graphic5, self.medPhaseKey)
-            self.draw()
-
-    def __delete_button_graph__(self):
-        self.remove_all_graphics()
-
-    def draw(self):
-        window.graphics = list(self.graphicToShow.values())
-        window.__update_graph__()
-
-    def __trans_button_graph__(self):
-        if (len(self.graphicToShow) > 0) and (self.transferenceModuleKey in self.graphicToShow.keys()):
-            self.remove_graphic(self.transferenceModuleKey)
-            self.remove_graphic(self.transferencePhaseKey)
-            self.draw()
-
-        else:
-            a = [10, 20, 30, 40, 75, 95, 120]
-            b = [60, -70, 80, 90, 65, 88, 77]
-            c = [10, 50, 80, 99, 120, 180, 222, 4000, 84444, 95555, 3333333, 5555555555555]
-            d = [20, 45, -88, 100, -151, 174, 188, 555, 800, 1050, 9999, 400]
-            e = [20, 20, 85, 85, -40, -280, 252]
-            f = [60, -60, 80, -80, 64, 55, 22]
-
-            graphic5 = GraphValues("Bode Phase", c, d, GraphTypes.BodePhase)
-            graphic4 = GraphValues("Bode Module", a, b, GraphTypes.BodeModule)
-            self.add_graphic(graphic4, self.transferenceModuleKey)
-            self.add_graphic(graphic5, self.transferencePhaseKey)
-            self.draw()
-
-
-class OutputGraphics(QMainWindow):
+class UIWindow(QMainWindow):
 
     def __init__(self):
         QMainWindow.__init__(self)
@@ -202,11 +90,13 @@ class OutputGraphics(QMainWindow):
         self.ModuleWidget.canvas.draw()
         if self.graphics is not None:
             if len(self.graphics) > 0:
-                for graph in self.graphics:
-                    if graph.type == GraphTypes.BodeModule:
-                        self.__plot_graph__(graph, self.ModuleWidget)
-                    elif graph.type == GraphTypes.BodePhase:
-                        self.__plot_graph__(graph, self.PhaseWidget)
+                for graphList in self.graphics:
+                    for toggeable_graph in graphList:
+                        if toggeable_graph.activated:
+                            if toggeable_graph.graph.type == GraphTypes.BodeModule:
+                                self.__plot_graph__(toggeable_graph.graph, self.ModuleWidget)
+                            elif toggeable_graph.graph.type == GraphTypes.BodePhase:
+                                self.__plot_graph__(toggeable_graph.graph, self.PhaseWidget)
 
         # draw each graph
 
@@ -243,43 +133,10 @@ class OutputGraphics(QMainWindow):
                                                xycoords='axes fraction', textcoords='offset points', rotation=0)
 
 
-# Testing Bench Class
-class Out:
-    @staticmethod
-    def return_out():
-        a = [10, 20, 30, 40, 75, 95, 120]
-        b = [60, -70, 80, 90, 65, 88, 77]
-        c = [10, 50, 80, 99, 120, 180, 222, 4000, 84444, 95555, 3333333, 5555555555555]
-        d = [20, 45, -88, 100, -151, 174, 188, 555, 800, 1050, 9999, 400]
-        e = [20, 20, 85, 85, -40, -280, 252]
-        f = [60, -60, 80, -80, 64, 55, 22]
-
-        graphic4 = GraphValues("Bode Phase", c, d, GraphTypes.BodePhase)
-        graphic5 = GraphValues("Bode Module", a, b, GraphTypes.BodeModule)
-
-        a = [graphic5, graphic4]
-        return a
-
-
-# Class GraphValues
-# This class is used to unify the properties of the graphs to show.
-class GraphValues:
-    def __init__(self, title, x_value_array, y_value_array, graphic_type):
-        self.title = title
-        self.x_values = x_value_array
-        self.y_values = y_value_array
-        self.type = graphic_type
-
-
-class GraphTypes(Enum):
-    """ GraphTypes """
-    BodeModule = "BodeModule"
-    BodePhase = "BodePhase"
-
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
 
-    window = OutputGraphics()
+    window = UIWindow()
     window.show()
     app.exec()
