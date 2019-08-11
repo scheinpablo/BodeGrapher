@@ -1,18 +1,23 @@
 # Main class of the output window.
+import os
 from enum import Enum
+import tkinter as tk
+from tkinter import filedialog
+from tkinter import messagebox
+import numpy as np
+from tkinter import *
+import matplotlib.pyplot as plt
 import matplotlib as mpl
-from matplotlib import pyplot as plt
 from PyQt5 import QtWidgets
-from PyQt5.QtGui import QDoubleValidator
+
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
-from PycharmProjects.TC1.graphwidget import GraphWidget
 
 
 class GraphManager:
     def __init__(self, mainWindow):
-        self.parent = mainWindow
         self.graphicToShow = {}
+        self.parent = mainWindow
         self.transferenceModuleKey = "transferenceModule"
         self.spiceModuleKey = "spiceModule"
         self.medModuleKey = "measurementModule"
@@ -42,7 +47,8 @@ class GraphManager:
             if files:
                 data = self.__parse_ltspice_txt_file(files)
                 for graph in data:
-                    self.add_graphic(GraphValues("Modulo", graph[0], graph[1], GraphTypes.BodeModule), self.spiceModuleKey)
+                    self.add_graphic(GraphValues("Modulo", graph[0], graph[1], GraphTypes.BodeModule),
+                                     self.spiceModuleKey)
                     self.add_graphic(GraphValues("Fase", graph[0], graph[2], GraphTypes.BodePhase), self.spicePhaseKey)
 
             self.draw()
@@ -74,6 +80,7 @@ class GraphManager:
             print("File not found")
         except ValueError:
             print("Invalid file loaded")
+
 
     def __med_button_graph__(self):
         if (len(self.graphicToShow) > 0) and (self.medModuleKey in self.graphicToShow.keys()):
@@ -135,11 +142,50 @@ class OutputGraphics(QMainWindow):
         self.medButton.clicked.connect(self.graphManager.__med_button_graph__)
         self.deleteButton.clicked.connect(self.graphManager.__delete_button_graph__)
         self.changeLabels.clicked.connect(self.__label_edit__)
+        self.exportButton.clicked.connect(self.__export_graphs__)
         self.ModuleWidget = self.graphwidget
         self.PhaseWidget = self.phaseGraph
 
         self.xLabel = "Eje x"
         self.yLabel = "Eje Y"
+
+    def __export_graphs__(self):
+        application_window = tk.Tk()
+        application_window.withdraw()
+        file_path = filedialog.askdirectory()
+
+
+        moduleimage = self.__save_image__(file_path, self.ModuleWidget.figure, "module")
+        phaseimage = self.__save_image__(file_path, self.PhaseWidget.figure, "phase")
+        if not(messagebox.askokcancel("Selecciona", "¿Desea guardar las imagenes en archivos separados?")):
+            new_image = self.concat_images(plt.imread(moduleimage)[:,:,:3], plt.imread(phaseimage)[:,:,:3])
+            os.remove(moduleimage, phaseimage)
+            self.__save_image__(file_path, new_image , "graphics" )
+
+    def concat_images(self, imga, imgb):
+        """
+        Combines two color image ndarrays side-by-side.
+        from https://stackoverflow.com/a/30228563/11331923
+        """
+        ha, wa = imga.shape[:2]
+        hb, wb = imgb.shape[:2]
+        max_height = np.max([ha, hb])
+        total_width = wa + wb
+        new_img = np.zeros(shape=(max_height, total_width, 3))
+        new_img[:ha, :wa] = imga
+        new_img[:hb, wa:wa + wb] = imgb
+        return new_img
+
+    def __save_image__(self, folder_path, image, name):
+        i = 1
+        if os.path.isfile(folder_path + "/" + name + ".png"):
+            while os.path.isfile(folder_path + "/" + name + "(" + str(i) + ").png"):
+                i = i + 1
+            image.savefig(folder_path + "/" + name + "(" + str(i) + ").png")
+            return folder_path + "/" + name + "(" + str(i) + ").png"
+        else:
+            image.savefig(folder_path + "/" + name + ".png")
+            return folder_path + "/" + name + ".png"
 
     def __label_edit__(self):
 
@@ -154,7 +200,7 @@ class OutputGraphics(QMainWindow):
 
         self.PhaseWidget.canvas.draw()
         self.ModuleWidget.canvas.draw()
-        if(self.graphics is not None):
+        if self.graphics is not None:
             if len(self.graphics) > 0:
                 for graph in self.graphics:
                     if graph.type == GraphTypes.BodeModule:
@@ -189,12 +235,12 @@ class OutputGraphics(QMainWindow):
 
     def __fix_y_title_position__(self, y_title):
         ticklabelpad = mpl.rcParams['ytick.major.pad']
-        self.PhaseWidget.canvas.axes.annotate(y_title, xy=(0, 1), xytext=(-50, -ticklabelpad),
-                                              ha='left', va='top',
-                                              xycoords='axes fraction', textcoords='offset points', rotation=90)
-        self.ModuleWidget.canvas.axes.annotate(y_title, xy=(0, 1), xytext=(-50, -ticklabelpad),
-                                               ha='left', va='top',
-                                               xycoords='axes fraction', textcoords='offset points', rotation=90)
+        self.PhaseWidget.canvas.axes.annotate(y_title, xy=(0, 1), xytext=(-30, -ticklabelpad),
+                                              ha='left', va='bottom',
+                                              xycoords='axes fraction', textcoords='offset points', rotation=0)
+        self.ModuleWidget.canvas.axes.annotate(y_title, xy=(0, 1), xytext=(-30, -ticklabelpad),
+                                               ha='left', va='bottom',
+                                               xycoords='axes fraction', textcoords='offset points', rotation=0)
 
 
 # Testing Bench Class
