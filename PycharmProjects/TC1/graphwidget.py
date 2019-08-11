@@ -13,7 +13,9 @@ class GraphWidget(QWidget):
     def __init__(self, parent = None):
 
         QWidget.__init__(self, parent)
-        
+
+        self.x_label = "Eje X"
+        self.y_label = "Eje Y"
         self.canvas = FigureCanvas(Figure())
 
         vertical_layout = QVBoxLayout()

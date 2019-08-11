@@ -25,7 +25,7 @@
      <rect>
       <x>10</x>
       <y>120</y>
-      <width>231</width>
+      <width>201</width>
       <height>101</height>
      </rect>
     </property>
@@ -45,7 +45,7 @@ font-size: 20px
      <rect>
       <x>10</x>
       <y>230</y>
-      <width>231</width>
+      <width>201</width>
       <height>101</height>
      </rect>
     </property>
@@ -64,7 +64,7 @@ font-size:20px;</string>
      <rect>
       <x>10</x>
       <y>340</y>
-      <width>231</width>
+      <width>201</width>
       <height>101</height>
      </rect>
     </property>
@@ -107,7 +107,7 @@ border-size:20px;</string>
      <rect>
       <x>10</x>
       <y>450</y>
-      <width>231</width>
+      <width>201</width>
       <height>101</height>
      </rect>
     </property>
@@ -150,8 +150,8 @@ font-size:20px;</string>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>20</y>
+      <x>530</x>
+      <y>0</y>
       <width>221</width>
       <height>71</height>
      </rect>
@@ -184,21 +184,22 @@ font-size:20px;</string>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="changeLabels">
+   <widget class="QPushButton" name="changeModuleLabels">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>30</y>
-      <width>31</width>
+      <x>310</x>
+      <y>10</y>
+      <width>81</width>
       <height>28</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(85, 255, 127);
-font: 75 8pt &quot;MS Shell Dlg 2&quot;;</string>
+     <string notr="true">background: rgb(52,73,85);
+color:rgb(255,255,255);
+border-radius: 10px;</string>
     </property>
     <property name="text">
-     <string>-&gt;</string>
+     <string>Module -&gt;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="exportButton">
@@ -206,7 +207,7 @@ font: 75 8pt &quot;MS Shell Dlg 2&quot;;</string>
      <rect>
       <x>10</x>
       <y>560</y>
-      <width>231</width>
+      <width>201</width>
       <height>101</height>
      </rect>
     </property>
@@ -218,6 +219,72 @@ font-size:20px;</string>
     </property>
     <property name="text">
      <string>EXPORTAR GRÁFICOS</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="changePhaseLabels">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>50</y>
+      <width>81</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background: rgb(52,73,85);
+color:rgb(255,255,255);
+border-radius: 10px;</string>
+    </property>
+    <property name="text">
+     <string>Phase -&gt;</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="transferenceCheck">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>160</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="spiceCheck">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>270</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="medCheck">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>380</y>
+      <width>21</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
@@ -244,4 +311,3 @@ font-size:20px;</string>
  <resources/>
  <connections/>
 </ui>
-

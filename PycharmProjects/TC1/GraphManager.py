@@ -12,6 +12,22 @@ class GraphManager:
         self.spiceKey = "spiceKey"
         self.medKey = "medKey"
 
+    def spice_checked(self):
+        self.__toggle_graphics__(self.spiceKey)
+
+    def transf_checked(self):
+        self.__toggle_graphics__(self.transferenceKey)
+
+    def med_checked(self):
+        self.__toggle_graphics__(self.medKey)
+
+    def __toggle_graphics__(self, key):
+        if (len(self.graphicsToShow) > 0) and (key in self.graphicsToShow.keys()):
+            for graph in self.graphicsToShow[key]:
+                graph.activated = not graph.activated
+
+        self.draw()
+
     def add_graphic(self, graphic_value, key):
 
         if (len(self.graphicsToShow) == 0) or not (key in self.graphicsToShow.keys()) or \
@@ -26,7 +42,7 @@ class GraphManager:
         self.graphicsToShow.clear()
         self.draw()
 
-    def __spice_button_graph__(self):
+    def spice_button_graph(self):
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -35,8 +51,8 @@ class GraphManager:
         if files:
             data = self.__parse_ltspice_txt_file(files)
             for graph in data:
-                module_graph = ToggleableGraph(GraphValues("Modulo", graph[0], graph[1], GraphTypes.BodeModule), True)
-                phase_graph = ToggleableGraph(GraphValues("Fase", graph[0], graph[2], GraphTypes.BodePhase), True)
+                module_graph = ToggleableGraph(GraphValues("Modulo", graph[0], graph[1], GraphTypes.BodeModule), self.parent.spiceCheck.isChecked())
+                phase_graph = ToggleableGraph(GraphValues("Fase", graph[0], graph[2], GraphTypes.BodePhase), self.parent.spiceCheck.isChecked())
                 self.add_graphic(module_graph,
                                  self.spiceKey)
                 self.add_graphic(phase_graph, self.spicePhaseKey)
@@ -71,7 +87,7 @@ class GraphManager:
         except ValueError:
             print("Invalid file loaded")
 
-    def __med_button_graph__(self):
+    def med_button_graph(self):
 
         a = [22110, 345, 310, 28, 75, 2827, 120]
         b = [60, -70, 80, 90, 65, 87, 77]
@@ -80,18 +96,18 @@ class GraphManager:
 
         graphic5 = GraphValues("Bode Phase", c, d, GraphTypes.BodePhase)
         graphic4 = GraphValues("Bode Module", a, b, GraphTypes.BodeModule)
-        self.add_graphic(ToggleableGraph(graphic4, True), self.medKey)
-        self.add_graphic(ToggleableGraph(graphic5, True), self.medKey)
+        self.add_graphic(ToggleableGraph(graphic4, self.parent.medCheck.isChecked()), self.medKey)
+        self.add_graphic(ToggleableGraph(graphic5, self.parent.medCheck.isChecked()), self.medKey)
         self.draw()
 
-    def __delete_button_graph__(self):
+    def delete_button_graph(self):
         self.remove_all_graphics()
 
     def draw(self):
         self.parent.graphics = list(self.graphicsToShow.values())
         self.parent.__update_graph__()
 
-    def __trans_button_graph__(self):
+    def trans_button_graph(self):
 
         a = [10, 20, 30, 40, 75, 95, 120]
         b = [60, -70, 80, 90, 65, 88, 77]
@@ -100,7 +116,6 @@ class GraphManager:
 
         graphic5 = GraphValues("Bode Phase", c, d, GraphTypes.BodePhase)
         graphic4 = GraphValues("Bode Module", a, b, GraphTypes.BodeModule)
-        self.add_graphic(ToggleableGraph(graphic4, True), self.transferenceKey)
-        self.add_graphic(ToggleableGraph(graphic5, True), self.transferenceKey)
+        self.add_graphic(ToggleableGraph(graphic4, self.parent.transferenceCheck.isChecked()), self.transferenceKey)
+        self.add_graphic(ToggleableGraph(graphic5, self.parent.transferenceCheck.isChecked()), self.transferenceKey)
         self.draw()
-

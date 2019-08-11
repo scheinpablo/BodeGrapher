@@ -1,18 +1,13 @@
 # Main class of the output window.
 import os
-from enum import Enum
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 import numpy as np
-from tkinter import *
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from PyQt5 import QtWidgets
-
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
-
 from PycharmProjects.TC1.GraphManager import GraphManager
 from PycharmProjects.TC1.GraphValues import GraphTypes
 
@@ -25,30 +20,30 @@ class UIWindow(QMainWindow):
         self.setWindowTitle("Salida")
         self.graphics = None
         self.graphManager = GraphManager(self)
-        self.transfButton.clicked.connect(self.graphManager.__trans_button_graph__)
-        self.spiceButton.clicked.connect(self.graphManager.__spice_button_graph__)
-        self.medButton.clicked.connect(self.graphManager.__med_button_graph__)
-        self.deleteButton.clicked.connect(self.graphManager.__delete_button_graph__)
-        self.changeLabels.clicked.connect(self.__label_edit__)
+        self.transfButton.clicked.connect(self.graphManager.trans_button_graph)
+        self.spiceButton.clicked.connect(self.graphManager.spice_button_graph)
+        self.medButton.clicked.connect(self.graphManager.med_button_graph)
+        self.deleteButton.clicked.connect(self.graphManager.delete_button_graph)
+        self.changeModuleLabels.clicked.connect(self.__label_module_edit__)
+        self.changePhaseLabels.clicked.connect(self.__label_phase_edit__)
         self.exportButton.clicked.connect(self.__export_graphs__)
+        self.spiceCheck.stateChanged.connect(self.graphManager.spice_checked)
+        self.transferenceCheck.stateChanged.connect(self.graphManager.transf_checked)
+        self.medCheck.stateChanged.connect(self.graphManager.med_checked)
         self.ModuleWidget = self.graphwidget
         self.PhaseWidget = self.phaseGraph
-
-        self.xLabel = "Eje x"
-        self.yLabel = "Eje Y"
 
     def __export_graphs__(self):
         application_window = tk.Tk()
         application_window.withdraw()
         file_path = filedialog.askdirectory()
 
-
         moduleimage = self.__save_image__(file_path, self.ModuleWidget.figure, "module")
         phaseimage = self.__save_image__(file_path, self.PhaseWidget.figure, "phase")
-        if not(messagebox.askokcancel("Selecciona", "¿Desea guardar las imagenes en archivos separados?")):
-            new_image = self.concat_images(plt.imread(moduleimage)[:,:,:3], plt.imread(phaseimage)[:,:,:3])
+        if not (messagebox.askokcancel("Selecciona", "¿Desea guardar las imagenes en archivos separados?")):
+            new_image = self.concat_images(plt.imread(moduleimage)[:, :, :3], plt.imread(phaseimage)[:, :, :3])
             os.remove(moduleimage, phaseimage)
-            self.__save_image__(file_path, new_image , "graphics" )
+            self.__save_image__(file_path, new_image, "graphics")
 
     def concat_images(self, imga, imgb):
         """
@@ -75,9 +70,18 @@ class UIWindow(QMainWindow):
             image.savefig(folder_path + "/" + name + ".png")
             return folder_path + "/" + name + ".png"
 
-    def __label_edit__(self):
+    def __label_module_edit__(self):
+        self.ModuleWidget.x_label = self.xTextEdit.toPlainText()
+        self.ModuleWidget.y_label = self.yTextEdit.toPlainText()
+        self.__fix_axes_titles_position__(self.ModuleWidget)
+        self.__update_graph__()
+        self.xTextEdit.setPlainText(" ")
+        self.yTextEdit.setPlainText(" ")
 
-        self.__fix_axes_titles_position__(self.xTextEdit.toPlainText(), self.yTextEdit.toPlainText())
+    def __label_phase_edit__(self):
+        self.PhaseWidget.x_label = self.xTextEdit.toPlainText()
+        self.PhaseWidget.y_label = self.yTextEdit.toPlainText()
+        self.__fix_axes_titles_position__(self.PhaseWidget)
         self.__update_graph__()
         self.xTextEdit.setPlainText(" ")
         self.yTextEdit.setPlainText(" ")
@@ -101,42 +105,28 @@ class UIWindow(QMainWindow):
         # draw each graph
 
     def __plot_graph__(self, graph, graph_widget):
-        self.__fix_axes_titles_position__(self.xLabel, self.yLabel)
+        self.__fix_axes_titles_position__(graph_widget)
         graph_widget.canvas.axes.semilogx(graph.x_values,
                                           graph.y_values)
         graph_widget.canvas.axes.set_title(graph.title)
         graph_widget.canvas.axes.grid()
         graph_widget.canvas.draw()
 
-    def __fix_axes_titles_position__(self, x_title, y_title):
-        self.__fix_y_title_position__(y_title)
-        self.__fix_x_title_position__(x_title)
-        self.xLabel = x_title
-        self.yLabel = y_title
+    def __fix_axes_titles_position__(self, widget):
+        self.__fix_y_title_position__(widget)
+        self.__fix_x_title_position__(widget)
 
-    def __fix_x_title_position__(self, x_title):
+    def __fix_x_title_position__(self, widget):
         ticklabelpad = mpl.rcParams['xtick.major.pad']
-        self.PhaseWidget.canvas.axes.annotate(x_title, xy=(1, 0), xytext=(0, -ticklabelpad),
-                                              ha='left', va='top',
-                                              xycoords='axes fraction', textcoords='offset points')
-        self.ModuleWidget.canvas.axes.annotate(x_title, xy=(1, 0), xytext=(0, -ticklabelpad),
-                                               ha='left', va='top',
-                                               xycoords='axes fraction', textcoords='offset points')
+        widget.canvas.axes.annotate(widget.x_label, xy=(1, 0), xytext=(0, -ticklabelpad),
+                                    ha='left', va='top',
+                                    xycoords='axes fraction', textcoords='offset points')
 
-    def __fix_y_title_position__(self, y_title):
+    def __fix_y_title_position__(self, widget):
         ticklabelpad = mpl.rcParams['ytick.major.pad']
-        self.PhaseWidget.canvas.axes.annotate(y_title, xy=(0, 1), xytext=(-30, -ticklabelpad),
-                                              ha='left', va='bottom',
-                                              xycoords='axes fraction', textcoords='offset points', rotation=0)
-        self.ModuleWidget.canvas.axes.annotate(y_title, xy=(0, 1), xytext=(-30, -ticklabelpad),
-                                               ha='left', va='bottom',
-                                               xycoords='axes fraction', textcoords='offset points', rotation=0)
+        widget.canvas.axes.annotate(widget.y_label, xy=(0, 1), xytext=(-30, -ticklabelpad),
+                                    ha='left', va='bottom',
+                                    xycoords='axes fraction', textcoords='offset points', rotation=0)
 
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-
-    window = UIWindow()
-    window.show()
-    app.exec()
