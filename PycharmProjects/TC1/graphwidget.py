@@ -22,8 +22,8 @@ class GraphWidget(QWidget):
 
         vertical_layout = QVBoxLayout()
 
-        self.toolbar.addAction(QIcon("saveall.png"), "Guardar ambos gráficos", self.save_all_pressed)
-        self.toolbar.addAction(QIcon("mark.png"), "Marcar puntos", self.mark_points)
+        self.toolbar.addAction(QIcon("Resources\saveall.png"), "Guardar ambos gráficos", self.save_all_pressed)
+        self.toolbar.addAction(QIcon("Resources\mark.png"), "Marcar puntos", self.mark_points)
 
         a = self.toolbar._actions.keys()
 
