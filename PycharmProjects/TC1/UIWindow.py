@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from PyQt5.QtWidgets import *
+import pylab
 from PyQt5.uic import loadUi
 from PycharmProjects.TC1.GraphManager import GraphManager
 from PycharmProjects.TC1.GraphValues import GraphTypes
@@ -92,14 +93,18 @@ class UIWindow(QMainWindow):
 
         self.PhaseWidget.canvas.draw()
         self.ModuleWidget.canvas.draw()
+        self.ModuleWidget.graph_labels = []
+        self.PhaseWidget.graph_labels = []
         if self.graphics is not None:
             if len(self.graphics) > 0:
                 for graphList in self.graphics:
                     for toggeable_graph in graphList:
                         if toggeable_graph.activated:
                             if toggeable_graph.graph.type == GraphTypes.BodeModule:
+                                self.ModuleWidget.graph_labels.append(toggeable_graph.graph.title)
                                 self.__plot_graph__(toggeable_graph.graph, self.ModuleWidget)
                             elif toggeable_graph.graph.type == GraphTypes.BodePhase:
+                                self.PhaseWidget.graph_labels.append(toggeable_graph.graph.title)
                                 self.__plot_graph__(toggeable_graph.graph, self.PhaseWidget)
 
         # draw each graph
@@ -108,6 +113,8 @@ class UIWindow(QMainWindow):
         self.__fix_axes_titles_position__(graph_widget)
         graph_widget.canvas.axes.semilogx(graph.x_values,
                                           graph.y_values)
+        graph_widget.canvas.axes.legend(graph_widget.graph_labels, loc='best')
+
         graph_widget.canvas.axes.set_title(graph.title)
         graph_widget.canvas.axes.grid()
         graph_widget.canvas.draw()
@@ -127,6 +134,3 @@ class UIWindow(QMainWindow):
         widget.canvas.axes.annotate(widget.y_label, xy=(0, 1), xytext=(-30, -ticklabelpad),
                                     ha='left', va='bottom',
                                     xycoords='axes fraction', textcoords='offset points', rotation=0)
-
-
-
