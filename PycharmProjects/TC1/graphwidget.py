@@ -53,3 +53,7 @@ class GraphWidget(QWidget):
 
     def mark_points(self):
         self.mark_points_flag = not self.mark_points_flag
+
+    def clear_marked_points(self):
+        self.x_marked_points = []
+        self.y_marked_points = []

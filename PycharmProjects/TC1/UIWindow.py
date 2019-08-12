@@ -25,7 +25,7 @@ class UIWindow(QMainWindow):
         self.transfButton.clicked.connect(self.graphManager.trans_button_graph)
         self.spiceButton.clicked.connect(self.graphManager.spice_button_graph)
         self.medButton.clicked.connect(self.graphManager.med_button_graph)
-        self.deleteButton.clicked.connect(self.graphManager.delete_button_graph)
+        self.deleteButton.clicked.connect(self.delete_all)
         self.changeModuleLabels.clicked.connect(self.__label_module_edit__)
         self.changePhaseLabels.clicked.connect(self.__label_phase_edit__)
         self.spiceCheck.stateChanged.connect(self.graphManager.spice_checked)
@@ -40,20 +40,27 @@ class UIWindow(QMainWindow):
         self.ModuleWidget.redraw_callback = self.__update_graph__
         self.PhaseWidget.redraw_callback = self.__update_graph__
 
+    def delete_all(self):
+        self.graphManager.delete_button_graph()
+        self.ModuleWidget.clear_marked_points()
+        self.PhaseWidget.clear_marked_points()
+        self.__update_graph__()
+
     def export_graphs(self):
         application_window = tk.Tk()
         application_window.withdraw()
         file_path = filedialog.askdirectory()
-        answer = messagebox.askyesnocancel(title="Selecciona",
-                                           message="¿Desea guardar las imagenes en archivos separados?")
-        moduleimage = ImageManagement.save_image(file_path, self.ModuleWidget.figure, "module")
-        phaseimage = ImageManagement.save_image(file_path, self.PhaseWidget.figure, "phase")
-        if not answer:
-            im_v = ImageManagement.concat_images(moduleimage, phaseimage)
-            name = ImageManagement.get_image_name(file_path, "signals")
-            cv2.imwrite(name, im_v)
-            os.remove(moduleimage)
-            os.remove(phaseimage)
+        if file_path is not None and file_path != "":
+            answer = messagebox.askyesnocancel(title="Selecciona",
+                                               message="¿Desea guardar las imagenes en archivos separados?")
+            moduleimage = ImageManagement.save_image(file_path, self.ModuleWidget.figure, "module")
+            phaseimage = ImageManagement.save_image(file_path, self.PhaseWidget.figure, "phase")
+            if not answer:
+                im_v = ImageManagement.concat_images(moduleimage, phaseimage)
+                name = ImageManagement.get_image_name(file_path, "signals")
+                cv2.imwrite(name, im_v)
+                os.remove(moduleimage)
+                os.remove(phaseimage)
 
     def __label_module_edit__(self):
         self.ModuleWidget.x_label = self.xTextEdit.toPlainText()
@@ -92,10 +99,10 @@ class UIWindow(QMainWindow):
                                 self.PhaseWidget.graph_labels.append(toggeable_graph.graph.title)
                                 self.__plot_graph__(toggeable_graph.graph, self.PhaseWidget)
         # draw each point
-        if self.PhaseWidget.mark_points_flag:
-            self.__plot_points__(self.PhaseWidget)
-        if self.ModuleWidget.mark_points_flag:
-            self.__plot_points__(self.ModuleWidget)
+
+        self.__plot_points__(self.PhaseWidget)
+
+        self.__plot_points__(self.ModuleWidget)
 
     def __plot_points__(self, graph_widget):
         for i in range(len(graph_widget.x_marked_points)):
