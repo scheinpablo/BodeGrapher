@@ -1,7 +1,5 @@
-from PyQt5.QtWidgets import QFileDialog
-
-from PycharmProjects.TC1.GraphValues import GraphValues, GraphTypes
-from PycharmProjects.TC1.ToggleableGraph import ToggleableGraph
+from PycharmProjects.TC1.GraphStructures.GraphValues import GraphValues, GraphTypes
+from PycharmProjects.TC1.GraphStructures.ToggleableGraph import ToggleableGraph
 
 
 class MeasurementFetching:
