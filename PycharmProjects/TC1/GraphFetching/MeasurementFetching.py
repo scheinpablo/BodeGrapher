@@ -1,3 +1,7 @@
+import math
+import pandas as pd
+from PyQt5.QtWidgets import *
+
 from PycharmProjects.TC1.GraphStructures.GraphValues import GraphValues, GraphTypes
 from PycharmProjects.TC1.GraphStructures.ToggleableGraph import ToggleableGraph
 
@@ -5,12 +9,34 @@ from PycharmProjects.TC1.GraphStructures.ToggleableGraph import ToggleableGraph
 class MeasurementFetching:
     @staticmethod
     def measurement_plot(window):
-        a = [50, 310, 345, 550, 750, 2827, 12000]
-        b = [60, -70, 80, 90, 65, 87, 77]
-        c = [10, 50, 564, 565, 5205, 5454, 6000, 40000, 84444, 95512155, 578786786, 867867868768]
-        d = [20, 45, -5434, 100, -24, 174, 788, 555, 800, 1050, 9999, 400]
 
-        graphic5 = GraphValues("Med Phase", c, d, GraphTypes.BodePhase)
-        graphic4 = GraphValues("Med Module", a, b, GraphTypes.BodeModule)
-        window.add_graphic(ToggleableGraph(graphic4, window.parent.medCheck.isChecked()), window.medKey)
-        window.add_graphic(ToggleableGraph(graphic5, window.parent.medCheck.isChecked()), window.medKey)
+        QMessageBox.warning(window.parent, "Important", "Format must be: Frequency | Vin | Vout", QMessageBox.Ok)
+
+        file, _ = QFileDialog.getOpenFileName(window.parent, "Select LTSpice plots", "C://",
+                                                "Bodes (*.xls , *.xlsx , *.csv)")
+        raw_data = None
+        try:
+            _, extension = file.split('.')
+            if extension == "xlsx" or extension == "xls":
+                raw_data = pd.read_excel(file, header=None, skiprows=1)
+            elif extension == "csv":
+                raw_data = pd.read_csv(file, header=None, skiprows=1)
+
+            if raw_data.shape[1] is not 3:
+                raise ValueError
+
+            f = []
+            amp = []
+            for i in range(0, len(raw_data)):
+                f.append(float("{0:.1f}".format(raw_data[0][i])))
+                _vin_vo_ = raw_data[2][i]/raw_data[1][i]
+                amp.append(20*math.log(_vin_vo_, 10))
+
+            module_graph = ToggleableGraph(GraphValues("Modulo", f, amp, GraphTypes.BodeModule),
+                                           window.parent.spiceCheck.isChecked())
+            window.add_graphic(module_graph, window.medKey)
+
+        except IOError:
+            print("Not existing File")
+        except ValueError:
+            print("Invalid file format")
