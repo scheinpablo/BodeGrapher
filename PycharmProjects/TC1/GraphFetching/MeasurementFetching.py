@@ -14,6 +14,12 @@ class MeasurementFetching:
 
         file, _ = QFileDialog.getOpenFileName(window.parent, "Select LTSpice plots", "C://",
                                                 "Bodes (*.xls , *.xlsx , *.csv)")
+        label = QMessageBox(QMessageBox.NoIcon, "Graph Label", "", QMessageBox.Ok)
+        layout = label.layout()
+        box = QLineEdit()
+        box.setMaxLength(15)
+        layout.addWidget(box)
+        label.show()
         raw_data = None
         try:
             _, extension = file.split('.')

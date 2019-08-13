@@ -1,5 +1,5 @@
-from PycharmProjects.TC1.GraphFetching.SpiceFetching import SpiceFetching
 from PycharmProjects.TC1.GraphFetching.MeasurementFetching import MeasurementFetching
+from PycharmProjects.TC1.GraphFetching.SpiceFetching import SpiceFetching
 from PycharmProjects.TC1.GraphFetching.TransferenceFetching import TransferenceFetching
 
 

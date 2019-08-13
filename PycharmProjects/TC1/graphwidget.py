@@ -16,7 +16,7 @@ class GraphWidget(QWidget):
 
         self.x_label = "Eje X"
         self.y_label = "Eje Y"
-        self.figure = Figure(tight_layout=True)
+        self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)
         self.toolbar = NavigationToolbar(self.canvas, self)
 
