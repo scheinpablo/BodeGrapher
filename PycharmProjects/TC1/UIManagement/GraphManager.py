@@ -10,6 +10,8 @@ class GraphManager:
         self.transferenceKey = "transferenceKey"
         self.spiceKey = "spiceKey"
         self.medKey = "medKey"
+        self.measure = MeasurementFetching(self)
+        self.spice = SpiceFetching(self)
 
     def spice_checked(self):
         self.__toggle_graphics__(self.spiceKey)
@@ -55,11 +57,8 @@ class GraphManager:
 
     def med_button_graph(self):
 
-        MeasurementFetching.measurement_plot(self)
-        self.draw()
+        self.measure.measurement_plot()
 
     def spice_button_graph(self):
 
-        SpiceFetching.spice_plot(self)
-
-        self.draw()
+        self.spice.spice_plot()
