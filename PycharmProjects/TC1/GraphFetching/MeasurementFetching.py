@@ -31,8 +31,9 @@ class MeasurementFetching(QDialog):
         self.ok.clicked.connect(self.process_data)
 
     def measurement_plot(self):
-        boton = QMessageBox.warning(self.window.parent, "Important", "Format must be: Frequency | Vin | Vout", QMessageBox.Ok)
-        if boton is QMessageBox.Ok:
+        button = QMessageBox.warning(self.window.parent, "Important", "Format must be: Frequency | Vin | Vout",
+                                     QMessageBox.Ok)
+        if button == QMessageBox.Ok:
             self.file, _ = QFileDialog.getOpenFileName(self.window.parent, "Select measured plots", "C://",
                                                     "Bodes (*.xls , *.xlsx , *.csv)")
             if self.file:
@@ -64,9 +65,10 @@ class MeasurementFetching(QDialog):
             self.label.setText("")
             if label == "":
                 label = "Graph " + str((len(self.window.graphicsToShow)+1))
+            color_graph = self.window.get_next_color()
             module_graph = ToggleableGraph(GraphValues(label, f, amp, GraphTypes.BodeModule),
                                            self.window.parent.spiceCheck.isChecked())
-            self.window.add_graphic(module_graph, self.window.medKey)
+            self.window.add_graphic(module_graph, self.window.medKey, color_graph)
             self.close()
             self.window.draw()
         except IOError:

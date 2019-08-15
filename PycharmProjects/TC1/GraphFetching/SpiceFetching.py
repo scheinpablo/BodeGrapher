@@ -60,15 +60,15 @@ class SpiceFetching(QDialog):
             self.label.setText("")
             if label == "":
                 label = "Graph " + str((len(self.window.graphicsToShow)+1))
-
+            color_graph = self.window.get_next_color()
             module_graph = ToggleableGraph(GraphValues(label, f, amp, GraphTypes.BodeModule),
                                            self.window.parent.spiceCheck.isChecked())
-            self.window.add_graphic(module_graph, self.window.spiceKey)
+            self.window.add_graphic(module_graph, self.window.spiceKey, color_graph)
 
             phase_graph = ToggleableGraph(GraphValues(label, f, phase, GraphTypes.BodePhase),
                                           self.window.parent.spiceCheck.isChecked())
 
-            self.window.add_graphic(phase_graph, self.window.spiceKey)
+            self.window.add_graphic(phase_graph, self.window.spiceKey, color_graph)
 
             self.close()
             self.window.draw()

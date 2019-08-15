@@ -12,6 +12,8 @@ class GraphManager:
         self.medKey = "medKey"
         self.measure = MeasurementFetching(self)
         self.spice = SpiceFetching(self)
+        self.transfer = TransferenceFetching(self)
+        self.colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
 
     def spice_checked(self):
         self.__toggle_graphics__(self.spiceKey)
@@ -29,12 +31,12 @@ class GraphManager:
 
         self.draw()
 
-    def add_graphic(self, graphic_value, key):
+    def add_graphic(self, graphic_value, key, color):
 
         if (len(self.graphicsToShow) == 0) or not (key in self.graphicsToShow.keys()) or \
                 (self.graphicsToShow[key] is None) or (not isinstance(self.graphicsToShow[key], list)):
             self.graphicsToShow[key] = []
-        self.graphicsToShow[key].append(graphic_value)
+        self.graphicsToShow[key].append((graphic_value, color))
 
     def remove_graphic(self, key):
         self.graphicsToShow.pop(key)
@@ -52,8 +54,7 @@ class GraphManager:
 
     def trans_button_graph(self):
 
-        TransferenceFetching.transference_plot(self)
-        self.draw()
+        self.transfer.transference_plot()
 
     def med_button_graph(self):
 
@@ -62,3 +63,10 @@ class GraphManager:
     def spice_button_graph(self):
 
         self.spice.spice_plot()
+
+    def get_next_color(self):
+        self.colors.reverse()
+        next_color = self.colors.pop()
+        self.colors.reverse()
+        self.colors.append(next_color)
+        return next_color

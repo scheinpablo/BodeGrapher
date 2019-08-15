@@ -91,13 +91,13 @@ class UIWindow(QMainWindow):
             if len(self.graphics) > 0:
                 for graphList in self.graphics:
                     for toggeable_graph in graphList:
-                        if toggeable_graph.activated:
-                            if toggeable_graph.graph.type == GraphTypes.BodeModule:
-                                self.ModuleWidget.graph_labels.append(toggeable_graph.graph.title)
-                                self.__plot_graph__(toggeable_graph.graph, self.ModuleWidget)
-                            elif toggeable_graph.graph.type == GraphTypes.BodePhase:
-                                self.PhaseWidget.graph_labels.append(toggeable_graph.graph.title)
-                                self.__plot_graph__(toggeable_graph.graph, self.PhaseWidget)
+                        if toggeable_graph[0].activated:
+                            if toggeable_graph[0].graph.type == GraphTypes.BodeModule:
+                                self.ModuleWidget.graph_labels.append(toggeable_graph[0].graph.title)
+                                self.__plot_graph__(toggeable_graph[0].graph, self.ModuleWidget, toggeable_graph[1])
+                            elif toggeable_graph[0].graph.type == GraphTypes.BodePhase:
+                                self.PhaseWidget.graph_labels.append(toggeable_graph[0].graph.title)
+                                self.__plot_graph__(toggeable_graph[0].graph, self.PhaseWidget, toggeable_graph[1])
         # draw each point
 
         self.__plot_points__(self.PhaseWidget)
@@ -127,10 +127,11 @@ class UIWindow(QMainWindow):
         graph_widget.canvas.axes.grid(self)
         graph_widget.canvas.draw()
 
-    def __plot_graph__(self, graph, graph_widget):
+    def __plot_graph__(self, graph, graph_widget, color):
         self.__fix_axes_titles_position__(graph_widget)
         graph_widget.canvas.axes.semilogx(graph.x_values,
-                                          graph.y_values)
+                                          graph.y_values,
+                                          color=color)
         graph_widget.canvas.axes.legend(graph_widget.graph_labels, loc='best')
 
         self.ModuleWidget.canvas.axes.set_title('Module')
