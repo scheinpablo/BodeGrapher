@@ -43,7 +43,7 @@ class MeasurementFetching(QDialog):
                 self.select_name.finish.clicked.connect(self.__send_data_amp_only__)
                 ok = self.__process_data_amp_only__()
             elif input_type == "Frecuencia | Amplitud | Fase":
-                self.select_name.finish.clicked.connect(self.__send_complet_data__)
+                self.select_name.finish.clicked.connect(self.__send_complete_data__)
                 ok = self.__process_all_data__()
             """ If the data was well loaded, the programs continue"""
             if ok:
@@ -97,8 +97,7 @@ class MeasurementFetching(QDialog):
 
         self.select_name.close()
         self.select_name.label.setText("")
-        self.instruction.setText("Ingrese un nombre para el gráfico")  # Reset the instruction label
-        self.select_name.finish.clicked.connect(None)
+        self.select_name.instruction.setText("Ingrese un nombre para el gráfico")  # Reset the instruction label
         self.data["Frequency"].clear()
         self.data["Amplitude"].clear()
         self.data["Phase"].clear()
@@ -139,7 +138,7 @@ class MeasurementFetching(QDialog):
                 raw_data = pd.read_excel(self.file, header=None, skiprows=1)
             elif extension == "csv":
                 raw_data = pd.read_csv(self.file, header=None, skiprows=1)
-
+            print(raw_data)
             if raw_data.shape[1] is not 3:  # Check if the number of columns is ok
                 raise ValueError
 
