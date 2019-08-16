@@ -14,9 +14,10 @@ from PycharmProjects.TC1.ImageMananagent.ImageManagement import ImageManagement
 from PycharmProjects.TC1.UIManagement.GraphManager import GraphManager
 
 
+# Clase UIWindow. Maneja lo relacionado con la ventana mostrada al usuario.
 class UIWindow(QMainWindow):
 
-    def __init__(self):
+    def __init__(self):  # Conecta los componentes del .ui realizado en QT con el programa en python
         QMainWindow.__init__(self)
         loadUi('tcDesign.ui', self)
         self.setWindowTitle("Plot Tool")
@@ -40,22 +41,26 @@ class UIWindow(QMainWindow):
         self.ModuleWidget.redraw_callback = self.__update_graph__
         self.PhaseWidget.redraw_callback = self.__update_graph__
 
-    def delete_all(self):
+    def delete_all(self):  # borra todos los graficos
         self.graphManager.delete_button_graph()
         self.ModuleWidget.clear_marked_points()
         self.PhaseWidget.clear_marked_points()
         self.__update_graph__()
 
-    def export_graphs(self):
-        application_window = tk.Tk()
-        application_window.withdraw()
-        file_path = filedialog.askdirectory()
-        if file_path is not None and file_path != "":
+    def export_graphs(self):  # exporta los graficos a archivos png
+        application_window = tk.Tk()  # Utiliza Tk para seleccionar la carpeta donde se guarda
+        application_window.withdraw()  # Esconde la ventana que muestra por defecto Tk
+        file_path = filedialog.askdirectory()  # Le pide al usuario que seleccione una carpeta para guardar las imagenes
+        if file_path is not None and file_path != "":  # Valida la seleccion del usuario
             answer = messagebox.askyesnocancel(title="Selecciona",
                                                message="¿Desea guardar las imagenes en archivos separados?")
+            """ A partir de ahora, aunque el usuario quiera guardar las imagenes en una unica foto, en principio se 
+            guardan por separado. """
             moduleimage = ImageManagement.save_image(file_path, self.ModuleWidget.figure, "module")
             phaseimage = ImageManagement.save_image(file_path, self.PhaseWidget.figure, "phase")
             if not answer:
+                """"Si el usuario quiso que las imagenes se guarden en una unica foto, concatena las dos imagenes
+                guardadas anteriormente, guarda la nueva imagen y elimina las viejas."""
                 im_v = ImageManagement.concat_images(moduleimage, phaseimage)
                 name = ImageManagement.get_image_name(file_path, "signals")
                 cv2.imwrite(name, im_v)
