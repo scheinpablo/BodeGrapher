@@ -3,27 +3,37 @@ from PycharmProjects.TC1.GraphFetching.SpiceFetching import SpiceFetching
 from PycharmProjects.TC1.GraphFetching.TransferenceFetching import TransferenceFetching
 
 
+# Clase GraphManager. Es una clase que almacena, agrega y elimina los valores y propiedades de los gráficos que se deben
+# mostrar en pantalla.
+# Las funciones de UIWindow llaman a funciones de esta clase para consultar que gráficos se deben mostrar,
+# esconder, etc.
 class GraphManager:
     def __init__(self, mainWindow):
-        self.graphicsToShow = {}
+        self.graphicsToShow = {}  # Diccionario de gráficos a mostrar. Contiene de donde son (Spice, med, H)
+        # y los valores).
         self.parent = mainWindow
         self.transferenceKey = "transferenceKey"
         self.spiceKey = "spiceKey"
         self.medKey = "medKey"
+        # Llamado a funciones que importen los valores de los gráficos. Se encuentran en la carpeta GraphFetching.
         self.measure = MeasurementFetching(self)
         self.spice = SpiceFetching(self)
         self.transfer = TransferenceFetching(self)
-        self.colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+        self.colors = ['b', 'g', 'r', 'c', 'm', 'y', 'k']  # Posibles colores para los graficos
 
+    # Toggle de los gráficos. Mostrar/Esconder.
     def spice_checked(self):
         self.__toggle_graphics__(self.spiceKey)
 
+    # Toggle de los gráficos. Mostrar/Esconder.
     def transf_checked(self):
         self.__toggle_graphics__(self.transferenceKey)
 
+    # Toggle de los gráficos. Mostrar/Esconder.
     def med_checked(self):
         self.__toggle_graphics__(self.medKey)
 
+    # Togglea los graficos con un key determinado. Por ejemplo spiceKey.
     def __toggle_graphics__(self, key):
         if (len(self.graphicsToShow) > 0) and (key in self.graphicsToShow.keys()):
             for graph in self.graphicsToShow[key]:
@@ -31,6 +41,9 @@ class GraphManager:
 
         self.draw()
 
+    # Agrega un gráfico. Parámetros: graphic_value, valore del gráfico (se debe pasar un objeto del tipo GraphValues
+    # de la carpeta GraphStructures; key: de donde es (ej self.spiceKey, self.medKey, self.transferenceKey);
+    # color: color del que se desea mostrar el gráfico (Se encuentran los posibles valores en self.colors)
     def add_graphic(self, graphic_value, key, color):
 
         if (len(self.graphicsToShow) == 0) or not (key in self.graphicsToShow.keys()) or \
