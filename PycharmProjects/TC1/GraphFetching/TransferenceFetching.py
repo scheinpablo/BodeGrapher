@@ -46,13 +46,13 @@ class TransferenceFetching(QWidget):
             graph_color = self.user_inerfase.get_next_color()
             """ Sending the information to the GraphManager """
             module_graph = ToggleableGraph(GraphValues(label, freq.copy(), amp.copy(), GraphTypes.BodeModule),
-                                           self.user_inerfase.parent.spiceCheck.isChecked())
-            self.user_inerfase.add_graphic(module_graph, self.user_inerfase.spiceKey, graph_color)
+                                           self.user_inerfase.parent.transferenceCheck.isChecked())
+            self.user_inerfase.add_graphic(module_graph, self.user_inerfase.transferenceKey, graph_color)
 
             phase_graph = ToggleableGraph(GraphValues(label, freq.copy(), phase.copy(), GraphTypes.BodePhase),
-                                          self.user_inerfase.parent.spiceCheck.isChecked())
+                                          self.user_inerfase.parent.transferenceCheck.isChecked())
 
-            self.user_inerfase.add_graphic(phase_graph, self.user_inerfase.spiceKey, graph_color)
+            self.user_inerfase.add_graphic(phase_graph, self.user_inerfase.transferenceKey, graph_color)
 
         except ValueError:
             QMessageBox.warning(self, "Important", "Not numeric input", QMessageBox.Ok)

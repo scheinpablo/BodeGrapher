@@ -62,7 +62,7 @@ class MeasurementFetching(QDialog):
         color_graph = self.window.get_next_color()
         """ Sending the graph to the GraphManager"""
         module_graph = ToggleableGraph(GraphValues(label, self.data["Frequency"].copy(), self.data["Amplitude"].copy(),
-                                                   GraphTypes.BodeModule), self.window.parent.spiceCheck.isChecked())
+                                                   GraphTypes.BodeModule), self.window.parent.medCheck.isChecked())
 
         self.window.add_graphic(module_graph, self.window.medKey, color_graph)
 
