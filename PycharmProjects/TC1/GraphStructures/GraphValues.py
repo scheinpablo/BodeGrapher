@@ -3,6 +3,7 @@
 from enum import Enum
 
 
+# Estructura con los valores de un gráfico.
 class GraphValues:
     def __init__(self, title, x_value_array, y_value_array, graphic_type):
         self.title = title
@@ -11,6 +12,7 @@ class GraphValues:
         self.type = graphic_type
 
 
+# Tipos posibles de gráficos
 class GraphTypes(Enum):
     """ GraphTypes """
     BodeModule = "BodeModule"

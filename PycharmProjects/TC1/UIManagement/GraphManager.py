@@ -51,20 +51,27 @@ class GraphManager:
             self.graphicsToShow[key] = []
         self.graphicsToShow[key].append((graphic_value, color))
 
+    # Remueve los graficos con un determinado key. Ej self.spiceKey. Se eliminarían todos los gráficos que
+    # provengan de Spice.
     def remove_graphic(self, key):
         self.graphicsToShow.pop(key)
 
+    # Remueve todos los graficos
     def remove_all_graphics(self):
         self.graphicsToShow.clear()
         self.draw()
 
+    # Función asociada al botón de eliminar todos los graficos
     def delete_button_graph(self):
         self.remove_all_graphics()
 
+    # Redibuja. Le pasa a la ventana padre una lista con los valores del diccionario de gráficos a mostrar y luego le
+    # dice a la ventana padre que se actualice.
     def draw(self):
         self.parent.graphics = list(self.graphicsToShow.values())
         self.parent.__update_graph__()
 
+    # Funciones asociadas a los botones de agregar gráficos desde distintos lugares (spice, med, H)
     def trans_button_graph(self):
 
         self.transfer.transference_plot()
@@ -77,6 +84,7 @@ class GraphManager:
 
         self.spice.spice_plot()
 
+    # Devuelve el siguiente valor de color que le toque al gráfico agregado.
     def get_next_color(self):
         self.colors.reverse()
         next_color = self.colors.pop()
