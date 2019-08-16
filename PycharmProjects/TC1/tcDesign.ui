@@ -88,8 +88,7 @@ font-size:20px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-color:black;
-border-size:20px;</string>
+     <string notr="true">border-color:black;</string>
     </property>
    </widget>
    <widget class="GraphWidget" name="phaseGraph" native="true">
