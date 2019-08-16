@@ -84,8 +84,8 @@ class SpiceFetching(QWidget):
         self.instruction.setText("Ingrese un nombre para el gráfico")  # Reset the instruction label
         self.label.setText("")
         self.close()  # Closing the name window
-        self.f.clear()
-        self.amp.clear()
-        self.phase.clear()
+        self.f = []
+        self.amp = []
+        self.phase = []
 
         self.window.draw()  # Telling the GraphManager to be redraw

@@ -19,7 +19,9 @@ class MeasurementFetching(QDialog):
 
         """ Callback to define which type of input we will receive """
         self.chose_type.finish.clicked.connect(self.__input_type__)
+        self.select_name.finish.clicked.connect(self.chooser)
 
+        self.type = False
         self.file = ""
         self.window = main_window
         self.data = {"Frequency": [],
@@ -40,10 +42,10 @@ class MeasurementFetching(QDialog):
         if self.file:
             ok = False
             if input_type == "Frecuencia | Vin | Vout":
-                self.select_name.finish.clicked.connect(self.__send_data_amp_only__)
+                self.type = True
                 ok = self.__process_data_amp_only__()
             elif input_type == "Frecuencia | Amplitud | Fase":
-                self.select_name.finish.clicked.connect(self.__send_complete_data__)
+                self.type = False
                 ok = self.__process_all_data__()
             """ If the data was well loaded, the programs continue"""
             if ok:
@@ -52,6 +54,12 @@ class MeasurementFetching(QDialog):
                 instruction += " del archivo " + filename
                 self.select_name.instruction.setText(instruction)
                 self.select_name.show()
+
+    def chooser(self):
+        if self.type:
+            self.__send_data_amp_only__()
+        else:
+            self.__send_complete_data__()
 
     def __send_data_amp_only__(self):
         """ Loading the graph name """
@@ -70,8 +78,8 @@ class MeasurementFetching(QDialog):
         self.select_name.close()
         self.select_name.label.setText("")
         self.select_name.instruction.setText("Ingrese un nombre para el gráfico")  # Reset the instruction label
-        self.data["Frequency"].clear()
-        self.data["Amplitude"].clear()
+        self.data["Frequency"] = []
+        self.data["Amplitude"] = []
 
         """ Redraw window"""
         self.window.draw()
@@ -98,9 +106,9 @@ class MeasurementFetching(QDialog):
         self.select_name.close()
         self.select_name.label.setText("")
         self.select_name.instruction.setText("Ingrese un nombre para el gráfico")  # Reset the instruction label
-        self.data["Frequency"].clear()
-        self.data["Amplitude"].clear()
-        self.data["Phase"].clear()
+        self.data["Frequency"] = []
+        self.data["Amplitude"] = []
+        self.data["Phase"] = []
 
         self.window.draw()
 
