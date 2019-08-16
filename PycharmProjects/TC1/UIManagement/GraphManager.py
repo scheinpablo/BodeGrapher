@@ -27,7 +27,7 @@ class GraphManager:
     def __toggle_graphics__(self, key):
         if (len(self.graphicsToShow) > 0) and (key in self.graphicsToShow.keys()):
             for graph in self.graphicsToShow[key]:
-                graph.activated = not graph.activated
+                graph[0].activated = not graph[0].activated
 
         self.draw()
 
