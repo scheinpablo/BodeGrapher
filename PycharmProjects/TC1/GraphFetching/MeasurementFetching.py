@@ -138,7 +138,7 @@ class MeasurementFetching(QDialog):
                 raw_data = pd.read_excel(self.file, header=None, skiprows=1)
             elif extension == "csv":
                 raw_data = pd.read_csv(self.file, header=None, skiprows=1)
-            print(raw_data)
+
             if raw_data.shape[1] is not 3:  # Check if the number of columns is ok
                 raise ValueError
 
