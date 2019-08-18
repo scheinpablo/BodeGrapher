@@ -199,7 +199,7 @@ color:rgb(255,255,255);
 border-radius: 10px;</string>
     </property>
     <property name="text">
-     <string>Module -&gt;</string>
+     <string>Módulo -&gt;</string>
     </property>
    </widget>
    <widget class="QPushButton" name="changePhaseLabels">
@@ -217,7 +217,7 @@ color:rgb(255,255,255);
 border-radius: 10px;</string>
     </property>
     <property name="text">
-     <string>Phase -&gt;</string>
+     <string>Fase -&gt;</string>
     </property>
    </widget>
    <widget class="QCheckBox" name="transferenceCheck">

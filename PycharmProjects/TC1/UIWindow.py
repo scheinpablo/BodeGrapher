@@ -34,8 +34,8 @@ class UIWindow(QMainWindow):
         self.medCheck.stateChanged.connect(self.graphManager.med_checked)
         self.ModuleWidget = self.graphwidget  # Objeto de la clase GraphWidget
         self.PhaseWidget = self.phaseGraph  # Objeto de la clase GraphWidget
-        self.ModuleWidget.canvas.axes.set_title('Module')
-        self.PhaseWidget.canvas.axes.set_title('Phase')
+        self.ModuleWidget.canvas.axes.set_title('Módulo')
+        self.PhaseWidget.canvas.axes.set_title('Fase')
         self.ModuleWidget.save_all_callback = self.export_graphs
         self.PhaseWidget.save_all_callback = self.export_graphs
         self.ModuleWidget.redraw_callback = self.__update_graph__
