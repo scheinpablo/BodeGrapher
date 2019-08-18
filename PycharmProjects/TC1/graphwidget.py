@@ -29,6 +29,8 @@ class GraphWidget(QWidget):
         # cuando son clickeados.
         self.toolbar.addAction(QIcon("Resources\saveall.png"), "Guardar ambos gráficos", self.save_all_pressed)
         self.toolbar.addAction(QIcon("Resources\mark.png"), "Marcar puntos", self.mark_points)
+        self.toolbar.addAction(QIcon("Resources\log_lin_approx.jpg"), "Cambiar escala", self.change_scale)
+        self.toolbar.addAction(QIcon("Resources\scatter_or_lineal.png"), "Lineal o Dispersión", self.change_format)
 
         self.cid = self.figure.canvas.mpl_connect('button_press_event', self)  # Evento de cuando se aprieta un botón
 
@@ -52,6 +54,9 @@ class GraphWidget(QWidget):
         self.redraw_callback = None
 
         self.mark_points_flag = False  # Flag que indica si los puntos se deben mostrar o estar escondidos.
+        self.log_flag = True  # Flag que indica si el grafico se encuentra en escala logaritmica.
+        self.continuous_line_flag = True # Flag que indica si el grafico se muestra como una curva continua o de
+        # dispersion
 
     def __call__(self, event):  # Se llama con un evento de click en el widget.
         if self.mark_points_flag:  # Si el flag de mostrar puntos está activado se agregarán las coordenadas del
@@ -60,7 +65,7 @@ class GraphWidget(QWidget):
             self.y_marked_points.append(event.ydata)
             self.redraw_callback()
 
-    def save_all_pressed(self): # Funcion que se llama el tocar en el toolbar el boton de guardar todos los graficos.
+    def save_all_pressed(self):  # Funcion que se llama el tocar en el toolbar el boton de guardar todos los graficos.
         self.save_all_callback()  # Callback que exporte todos los graficos.
 
     def mark_points(self):  # Funcion que se llama el tocar en el toolbar el boton de marcar puntos.
@@ -69,3 +74,11 @@ class GraphWidget(QWidget):
     def clear_marked_points(self):  # Se limpian los puntos marcados
         self.x_marked_points = []
         self.y_marked_points = []
+
+    def change_scale(self):
+        self.log_flag = not self.log_flag
+        self.redraw_callback()
+
+    def change_format(self):
+        self.continuous_line_flag = not self.continuous_line_flag
+        self.redraw_callback()

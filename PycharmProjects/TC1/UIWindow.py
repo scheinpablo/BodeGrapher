@@ -153,9 +153,16 @@ class UIWindow(QMainWindow):
     # mostrar; graph_widget: widget donde se añadirá el gráfico; color: color del gráfico.
     def __plot_graph__(self, graph, graph_widget, color):
         self.__fix_axes_titles_position__(graph_widget)
-        graph_widget.canvas.axes.semilogx(graph.x_values,  # Función principal que setea los gráficos a escala
+        if graph_widget.continuous_line_flag:
+            graph_widget.canvas.axes.plot(graph.x_values,  # Función principal que setea los gráficos a escala
+                                              graph.y_values,  # logarítmica con los valores indicados en los arrays.
+                                              color=color)
+        else:
+            graph_widget.canvas.axes.scatter(graph.x_values,  # Función principal que setea los gráficos a escala
                                           graph.y_values,  # logarítmica con los valores indicados en los arrays.
                                           color=color)
+        if graph_widget.log_flag:
+            graph_widget.canvas.axes.set_xscale('log')
         graph_widget.canvas.axes.legend(graph_widget.graph_labels,
                                         loc='best')  # leyendas ubicadas en el mejor lugar posible
 
