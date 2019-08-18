@@ -49,6 +49,7 @@ class GraphManager:
         if (len(self.graphicsToShow) == 0) or not (key in self.graphicsToShow.keys()) or \
                 (self.graphicsToShow[key] is None) or (not isinstance(self.graphicsToShow[key], list)):
             self.graphicsToShow[key] = []
+
         self.graphicsToShow[key].append((graphic_value, color))
 
     # Remueve los graficos con un determinado key. Ej self.spiceKey. Se eliminarían todos los gráficos que

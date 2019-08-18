@@ -70,7 +70,7 @@ class MeasurementFetching(QDialog):
         color_graph = self.window.get_next_color()
         """ Sending the graph to the GraphManager"""
         module_graph = ToggleableGraph(GraphValues(label, self.data["Frequency"].copy(), self.data["Amplitude"].copy(),
-                                                   GraphTypes.BodeModule), self.window.parent.medCheck.isChecked())
+                                                   GraphTypes.BodeModule, True), self.window.parent.medCheck.isChecked())
 
         self.window.add_graphic(module_graph, self.window.medKey, color_graph)
 
@@ -94,12 +94,12 @@ class MeasurementFetching(QDialog):
 
         """ Sending the graph to the GraphManager"""
         module_graph = ToggleableGraph(GraphValues(label, self.data["Frequency"].copy(), self.data["Amplitude"].copy(),
-                                                   GraphTypes.BodeModule), self.window.parent.medCheck.isChecked())
+                                                   GraphTypes.BodeModule, True), self.window.parent.medCheck.isChecked())
 
         self.window.add_graphic(module_graph, self.window.medKey, color_graph)
 
         phase_graph = ToggleableGraph(GraphValues(label, self.data["Frequency"].copy(), self.data["Phase"].copy(),
-                                                  GraphTypes.BodePhase), self.window.parent.medCheck.isChecked())
+                                                  GraphTypes.BodePhase, True), self.window.parent.medCheck.isChecked())
 
         self.window.add_graphic(phase_graph, self.window.medKey, color_graph)
 

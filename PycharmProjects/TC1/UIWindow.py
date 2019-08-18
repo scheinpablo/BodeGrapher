@@ -13,7 +13,6 @@ from PycharmProjects.TC1.GraphStructures.GraphValues import GraphTypes
 from PycharmProjects.TC1.ImageMananagent.ImageManagement import ImageManagement
 from PycharmProjects.TC1.UIManagement.GraphManager import GraphManager
 
-
 # Clase UIWindow. Maneja lo relacionado con la ventana mostrada al usuario.
 class UIWindow(QMainWindow):
 
@@ -153,12 +152,12 @@ class UIWindow(QMainWindow):
     # mostrar; graph_widget: widget donde se añadirá el gráfico; color: color del gráfico.
     def __plot_graph__(self, graph, graph_widget, color):
         self.__fix_axes_titles_position__(graph_widget)
-        if graph_widget.continuous_line_flag:
-            graph_widget.canvas.axes.plot(graph.x_values,  # Función principal que setea los gráficos a escala
+        if (not graph_widget.continuous_line_flag) and graph.scatterable:
+            graph_widget.canvas.axes.scatter(graph.x_values,  # Función principal que setea los gráficos a escala
                                               graph.y_values,  # logarítmica con los valores indicados en los arrays.
                                               color=color)
         else:
-            graph_widget.canvas.axes.scatter(graph.x_values,  # Función principal que setea los gráficos a escala
+            graph_widget.canvas.axes.plot(graph.x_values,  # Función principal que setea los gráficos a escala
                                           graph.y_values,  # logarítmica con los valores indicados en los arrays.
                                           color=color)
         if graph_widget.log_flag:
