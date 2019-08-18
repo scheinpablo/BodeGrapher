@@ -159,8 +159,8 @@ class UIWindow(QMainWindow):
         graph_widget.canvas.axes.legend(graph_widget.graph_labels,
                                         loc='best')  # leyendas ubicadas en el mejor lugar posible
 
-        self.ModuleWidget.canvas.axes.set_title('Module')
-        self.PhaseWidget.canvas.axes.set_title('Phase')
+        self.ModuleWidget.canvas.axes.set_title('Módulo')
+        self.PhaseWidget.canvas.axes.set_title('Fase')
         graph_widget.canvas.axes.grid(self)
         graph_widget.canvas.draw()  # redibuja
 
