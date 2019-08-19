@@ -49,19 +49,19 @@ class UIWindow(QMainWindow):
     def export_graphs(self):  # exporta los graficos a archivos png
         application_window = tk.Tk()  # Utiliza Tk para seleccionar la carpeta donde se guarda
         application_window.withdraw()  # Esconde la ventana que muestra por defecto Tk
-        file_path = filedialog.askdirectory()  # Le pide al usuario que seleccione una carpeta para guardar las imagenes
-        if file_path is not None and file_path != "":  # Valida la seleccion del usuario
+        folder_path = filedialog.askdirectory()  # Le pide al usuario que seleccione una carpeta para guardar las imagenes
+        if folder_path is not None and folder_path != "":  # Valida la seleccion del usuario
             answer = messagebox.askyesnocancel(title="Selecciona",
                                                message="¿Desea guardar las imagenes en archivos separados?")
             """ A partir de ahora, aunque el usuario quiera guardar las imagenes en una unica foto, en principio se 
             guardan por separado. """
-            moduleimage = ImageManagement.save_image(file_path, self.ModuleWidget.figure, "module")
-            phaseimage = ImageManagement.save_image(file_path, self.PhaseWidget.figure, "phase")
+            moduleimage = ImageManagement.save_image(folder_path, self.ModuleWidget.figure, "module")
+            phaseimage = ImageManagement.save_image(folder_path, self.PhaseWidget.figure, "phase")
             if not answer:
                 """"Si el usuario quiso que las imagenes se guarden en una unica foto, concatena las dos imagenes
                 guardadas anteriormente, guarda la nueva imagen y elimina las viejas."""
                 im_v = ImageManagement.concat_images(moduleimage, phaseimage)
-                name = ImageManagement.get_image_name(file_path, "signals")
+                name = ImageManagement.get_image_name(folder_path, "signals")
                 cv2.imwrite(name, im_v)
                 os.remove(moduleimage)
                 os.remove(phaseimage)
@@ -183,6 +183,6 @@ class UIWindow(QMainWindow):
 
     def __fix_y_title_position__(self, widget):
         ticklabelpad = mpl.rcParams['ytick.major.pad']
-        widget.canvas.axes.annotate(widget.y_label, xy=(0, 1), xytext=(-30, -ticklabelpad),
+        widget.canvas.axes.annotate(widget.y_label, xy=(0, 1), xytext=(-30, -ticklabelpad+10),
                                     ha='left', va='bottom',
                                     xycoords='axes fraction', textcoords='offset points', rotation=0)
