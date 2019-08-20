@@ -55,7 +55,7 @@ class GraphWidget(QWidget):
 
         self.mark_points_flag = False  # Flag que indica si los puntos se deben mostrar o estar escondidos.
         self.log_flag = True  # Flag que indica si el grafico se encuentra en escala logaritmica.
-        self.continuous_line_flag = True # Flag que indica si el grafico se muestra como una curva continua o de
+        self.continuous_line_flag = False # Flag que indica si el grafico de medicion se muestra como una curva continua o de
         # dispersion
 
     def __call__(self, event):  # Se llama con un evento de click en el widget.
