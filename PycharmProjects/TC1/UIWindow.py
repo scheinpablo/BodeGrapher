@@ -177,7 +177,7 @@ class UIWindow(QMainWindow):
 
     def __fix_x_title_position__(self, widget):
         ticklabelpad = mpl.rcParams['xtick.major.pad']
-        widget.canvas.axes.annotate(widget.x_label, xy=(1, 0), xytext=(0, -ticklabelpad),
+        widget.canvas.axes.annotate(widget.x_label, xy=(1, 0), xytext=(20, -ticklabelpad),
                                     ha='left', va='top',
                                     xycoords='axes fraction', textcoords='offset points')
 
