@@ -13,6 +13,7 @@ from PycharmProjects.TC1.GraphStructures.GraphValues import GraphTypes
 from PycharmProjects.TC1.ImageMananagent.ImageManagement import ImageManagement
 from PycharmProjects.TC1.UIManagement.GraphManager import GraphManager
 
+
 # Clase UIWindow. Maneja lo relacionado con la ventana mostrada al usuario.
 class UIWindow(QMainWindow):
 
@@ -94,8 +95,6 @@ class UIWindow(QMainWindow):
 
         self.PhaseWidget.canvas.draw()  # Se defibujan en blanco
         self.ModuleWidget.canvas.draw()
-        self.ModuleWidget.graph_labels = []  # Array para las leyendas de los gráficos.
-        self.PhaseWidget.graph_labels = []
         # draw each activated graph
         if self.graphics is not None:
             if len(self.graphics) > 0:  # Si hay graficos para mostrar
@@ -105,11 +104,9 @@ class UIWindow(QMainWindow):
                         if toggeable_graph[0].activated:  # Chequea el flag de mostrar el gráfico en pantalla está
                             # activado
                             if toggeable_graph[0].graph.type == GraphTypes.BodeModule:
-                                self.ModuleWidget.graph_labels.append(toggeable_graph[0].graph.title)  # Agrega leyenda
                                 self.__plot_graph__(toggeable_graph[0].graph, self.ModuleWidget,
                                                     toggeable_graph[1])  # Dibuja el gráfico
                             elif toggeable_graph[0].graph.type == GraphTypes.BodePhase:
-                                self.PhaseWidget.graph_labels.append(toggeable_graph[0].graph.title)  # Agrega leyenda
                                 self.__plot_graph__(toggeable_graph[0].graph, self.PhaseWidget,
                                                     toggeable_graph[1])  # Dibuja el gráfico
 
@@ -154,16 +151,16 @@ class UIWindow(QMainWindow):
         self.__fix_axes_titles_position__(graph_widget)
         if (not graph_widget.continuous_line_flag) and graph.scatterable:
             graph_widget.canvas.axes.scatter(graph.x_values,  # Función principal que setea los gráficos a escala
-                                              graph.y_values,  # logarítmica con los valores indicados en los arrays.
-                                              color=color)
+                                             graph.y_values,  # logarítmica con los valores indicados en los arrays.
+                                             color=color, label=graph.title)
         else:
             graph_widget.canvas.axes.plot(graph.x_values,  # Función principal que setea los gráficos a escala
                                           graph.y_values,  # logarítmica con los valores indicados en los arrays.
-                                          color=color)
+                                          color=color, label=graph.title)
         if graph_widget.log_flag:
             graph_widget.canvas.axes.set_xscale('log')
-        graph_widget.canvas.axes.legend(graph_widget.graph_labels,
-                                        loc='best')  # leyendas ubicadas en el mejor lugar posible
+
+        graph_widget.canvas.axes.legend(loc='best')  # leyendas ubicadas en el mejor lugar posible
 
         self.ModuleWidget.canvas.axes.set_title('Módulo')
         self.PhaseWidget.canvas.axes.set_title('Fase')
@@ -183,6 +180,6 @@ class UIWindow(QMainWindow):
 
     def __fix_y_title_position__(self, widget):
         ticklabelpad = mpl.rcParams['ytick.major.pad']
-        widget.canvas.axes.annotate(widget.y_label, xy=(0, 1), xytext=(-30, -ticklabelpad+10),
+        widget.canvas.axes.annotate(widget.y_label, xy=(0, 1), xytext=(-30, -ticklabelpad + 10),
                                     ha='left', va='bottom',
                                     xycoords='axes fraction', textcoords='offset points', rotation=0)

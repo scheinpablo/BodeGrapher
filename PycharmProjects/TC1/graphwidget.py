@@ -36,7 +36,6 @@ class GraphWidget(QWidget):
 
         vertical_layout.addWidget(self.canvas)  # Se le agrega el canvas al widget
         vertical_layout.addWidget(self.toolbar)  # Se le agrega el toolbar al widget
-        self.graph_labels = []  # Acá se agregan las leyendas de los distintos gráficos mostrados en el toolbar.
 
         # Arreglos de los puntos marcados por el usuario.
         self.x_marked_points = []
