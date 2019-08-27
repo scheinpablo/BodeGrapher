@@ -41,6 +41,7 @@ class GraphWidget(QWidget):
         self.x_marked_points = []
         self.y_marked_points = []
 
+
         #
         self.canvas.axes = self.canvas.figure.add_subplot(111)  # Plotea el canvas. Si no se entiende que es el ploteo,
         # mirar

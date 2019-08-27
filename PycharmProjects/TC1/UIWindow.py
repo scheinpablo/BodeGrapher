@@ -6,6 +6,7 @@ from tkinter import messagebox
 
 import cv2
 import matplotlib as mpl
+from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUi
 
@@ -20,6 +21,7 @@ class UIWindow(QMainWindow):
     def __init__(self):  # Conecta los componentes del .ui realizado en QT con el programa en python
         QMainWindow.__init__(self)
         loadUi('tcDesign_2.ui', self)
+
         self.setWindowTitle("Plot Tool")
         self.graphics = None
         self.graphManager = GraphManager(self)
@@ -40,6 +42,8 @@ class UIWindow(QMainWindow):
         self.PhaseWidget.save_all_callback = self.export_graphs
         self.ModuleWidget.redraw_callback = self.__update_graph__
         self.PhaseWidget.redraw_callback = self.__update_graph__
+
+
 
     def delete_all(self):  # borra todos los graficos
         self.graphManager.delete_button_graph()
@@ -142,7 +146,11 @@ class UIWindow(QMainWindow):
 
             graph_widget.canvas.axes.annotate("[" + x_text + "; " + y_text + "]"
                                               , (x_point, y_point))  # Se agrega el label a cada punto
-        graph_widget.canvas.axes.grid(self)
+        if graph_widget.log_flag:
+            graph_widget.canvas.axes.set_xscale('log')
+            graph_widget.canvas.axes.grid(True, which="both", ls="-")
+        else:
+            graph_widget.canvas.axes.grid(self)
         graph_widget.canvas.draw()  # Se redibuja el grafico con los puntos-
 
     # Función plot_graph. Se la llama de update_graph dibujar cada grafico.. Parametros: graph, valores del grafico a
@@ -159,12 +167,15 @@ class UIWindow(QMainWindow):
                                           color=color, label=graph.title)
         if graph_widget.log_flag:
             graph_widget.canvas.axes.set_xscale('log')
+            graph_widget.canvas.axes.grid(True, which="both", ls="-")
+        else:
+            graph_widget.canvas.axes.grid(self)
 
         graph_widget.canvas.axes.legend(loc='best')  # leyendas ubicadas en el mejor lugar posible
 
         self.ModuleWidget.canvas.axes.set_title('Módulo')
         self.PhaseWidget.canvas.axes.set_title('Fase')
-        graph_widget.canvas.axes.grid(self)
+
         graph_widget.canvas.draw()  # redibuja
 
     # Funciones que configuran y muestran los titulos de los ejes.
