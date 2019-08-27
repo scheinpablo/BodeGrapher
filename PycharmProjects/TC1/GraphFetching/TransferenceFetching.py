@@ -36,7 +36,7 @@ class TransferenceFetching(QWidget):
             transfer = signal.lti(num_list, den_list)
             """ Getting the bode values """
             freq, amp, phase = transfer.bode()
-            freq = [(i/(2*math.pi)) for i in freq]  # Converting from radians to hertz
+            freq = [(i / (2 * math.pi)) for i in freq]  # Converting from radians to hertz
             """ Getting graph's name """
             label = self.labelName.text()
             self.labelName.setText("")
@@ -44,18 +44,27 @@ class TransferenceFetching(QWidget):
                 label = "Graph " + str((len(self.user_inerfase.graphicsToShow) + 1))
 
             graph_color = self.user_inerfase.get_next_color()
-            """ Sending the information to the GraphManager """
-            module_graph = ToggleableGraph(GraphValues(label, freq.copy(), amp.copy(), GraphTypes.BodeModule),
-                                           self.user_inerfase.parent.transferenceCheck.isChecked())
-            self.user_inerfase.add_graphic(module_graph, self.user_inerfase.transferenceKey, graph_color)
 
             phase_graph = ToggleableGraph(GraphValues(label, freq.copy(), phase.copy(), GraphTypes.BodePhase),
                                           self.user_inerfase.parent.transferenceCheck.isChecked())
 
             self.user_inerfase.add_graphic(phase_graph, self.user_inerfase.transferenceKey, graph_color)
 
+            if self.theorical_type.currentText() == "H($)":
+                """ Sending the information to the GraphManager """
+                module_graph = ToggleableGraph(GraphValues(label, freq.copy(), amp.copy(), GraphTypes.BodeModule),
+                                               self.user_inerfase.parent.transferenceCheck.isChecked())
+                self.user_inerfase.add_graphic(module_graph, self.user_inerfase.transferenceKey, graph_color)
+
+            elif  self.theorical_type.currentText() == "Z($)":
+                impedance = [math.exp(i/20) for i in amp]
+                """ Sending the information to the GraphManager """
+                module_graph = ToggleableGraph(GraphValues(label, freq.copy(), impedance.copy(), GraphTypes.BodeModule),
+                                               self.user_inerfase.parent.transferenceCheck.isChecked())
+                self.user_inerfase.add_graphic(module_graph, self.user_inerfase.transferenceKey, graph_color)
+
         except ValueError:
-            QMessageBox.warning(self, "Important", "Not numeric input", QMessageBox.Ok)
+                QMessageBox.warning(self, "Important", "Not numeric input", QMessageBox.Ok)
 
         self.close()
         self.equation.figure.clear()
@@ -100,5 +109,5 @@ class TransferenceFetching(QWidget):
 
         """ Writing the fraction in LaTex's style """
         equation = "$ \\frac{"+num_str+"}{"+den_str+"}$"
-        self.equation.figure.text(0.1, 0.6, equation, fontsize=10)
+        self.equation.figure.text(0.1, 0.8, equation, fontsize=10)
         self.equation.canvas.draw()
