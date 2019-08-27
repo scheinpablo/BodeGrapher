@@ -20,7 +20,7 @@ class UIWindow(QMainWindow):
 
     def __init__(self):  # Conecta los componentes del .ui realizado en QT con el programa en python
         QMainWindow.__init__(self)
-        loadUi('tcDesign_2.ui', self)
+        loadUi('tcDesign.ui', self)
 
         self.setWindowTitle("Plot Tool")
         self.graphics = None
