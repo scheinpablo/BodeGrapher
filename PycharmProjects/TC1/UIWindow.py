@@ -43,8 +43,6 @@ class UIWindow(QMainWindow):
         self.ModuleWidget.redraw_callback = self.__update_graph__
         self.PhaseWidget.redraw_callback = self.__update_graph__
 
-
-
     def delete_all(self):  # borra todos los graficos
         self.graphManager.delete_button_graph()
         self.ModuleWidget.clear_marked_points()
@@ -116,36 +114,48 @@ class UIWindow(QMainWindow):
 
         # Se dibujan los puntos que fueron marcados por el usuario.
 
-        self.__plot_points__(self.PhaseWidget)
+        self.__plot_points__(self.PhaseWidget, GraphTypes.BodePhase)
 
-        self.__plot_points__(self.ModuleWidget)
+        self.__plot_points__(self.ModuleWidget, GraphTypes.BodeModule)
 
     # Función plot_points. Dibuja en pantalla los puntos que fueron marcados por el usuario en el grafico que
     # corresponda. Parametro, el grafico donde se desea actualizar el dibujo de los puntos
     # Esta función busca los puntos en graph_widget.x_marked_points y graph_widget.y_marked_points.
     # El agregado de puntos a estas variables se realiza directamente en graphwidget.py
-    def __plot_points__(self, graph_widget):
+    def __plot_points__(self, graph_widget, type):
+
+        puntos_a_descartar = []
         for i in range(len(graph_widget.x_marked_points)):  # Se itera cada punto
-            x_point = graph_widget.x_marked_points[i]
-            y_point = graph_widget.y_marked_points[i]
-            graph_widget.canvas.axes.plot(x_point,  # Se dibuja el punto en forma de X y en color rojo.
-                                          y_point, color='red',
-                                          markersize=8, marker='x')
+            x_point = graph_widget.x_marked_points.x_values[i]
+            y_point = graph_widget.x_marked_points.y_values[i]
+            what, x, y = self.__check_poit__(x_point, y_point, type)
+            if what:
+                graph_widget.x_marked_points.x_values[i] = x
+                graph_widget.x_marked_points.y_values[i] = y
+                graph_widget.canvas.axes.plot(x,  # Se dibuja el punto en forma de X y en color rojo.
+                                              y, color='red',
+                                              markersize=8, marker='x')
 
-            # Si el valor del punto es chico (entre -10 y 10) se utilizan 2 decimales para su label. Sino,
-            # ningún decimal.
-            if 10 > x_point > -10:
-                x_text = str(round(x_point, 2))
+                # Si el valor del punto es chico (entre -10 y 10) se utilizan 2 decimales para su label. Sino,
+                # ningún decimal.
+                if 10 > x > -10:
+                   x_text = str(round(x, 2))
+                else:
+                    x_text = str(int(round(x)))
+
+                if 10 > y > -10:
+                    y_text = str(round(y, 2))
+                else:
+                    y_text = str(int(round(y)))
+
+                graph_widget.canvas.axes.annotate("[" + x_text + "; " + y_text + "]"
+                                                  , (x, y))  # Se agrega el label a cada punto
             else:
-                x_text = str(int(round(x_point)))
+                puntos_a_descartar.append(i)  # indices de puntos inutiles
+        for j in puntos_a_descartar:
+            del graph_widget.x_marked_points.x_values[j]
+            del graph_widget.x_marked_points.y_values[j]
 
-            if 10 > y_point > -10:
-                y_text = str(round(y_point, 2))
-            else:
-                y_text = str(int(round(y_point)))
-
-            graph_widget.canvas.axes.annotate("[" + x_text + "; " + y_text + "]"
-                                              , (x_point, y_point))  # Se agrega el label a cada punto
         if graph_widget.log_flag:
             graph_widget.canvas.axes.set_xscale('log')
             graph_widget.canvas.axes.grid(True, which="both", ls="-")
@@ -177,6 +187,30 @@ class UIWindow(QMainWindow):
         self.PhaseWidget.canvas.axes.set_title('Fase')
 
         graph_widget.canvas.draw()  # redibuja
+
+    def __check_poit__(self, x, y, graphType):
+        if len(self.graphics) > 0:  # Si hay graficos para mostrar
+            for graphList in self.graphics:  # Se itera por cada lista de gráficos (generalmente lista de 2
+                # valores, PhaseGraph y ModuleGraph)
+                for toggeable_graph in graphList:  # Se itera por cada gráfico
+                    if toggeable_graph[0].activated:  # Chequea el flag de mostrar el gráfico en pantalla está
+                        # activado
+                        if toggeable_graph[0].graph.type == graphType:
+                            nearest = [None, None, None]
+                            for i in range(0, len(toggeable_graph[0].graph.x_values)):
+                                distance = (toggeable_graph[0].graph.x_values[i] - x)**2 +\
+                                           (toggeable_graph[0].graph.y_values[i] - y)**2
+                                print(distance)
+                                if distance < 1000:
+                                    print("SI")
+                                    if nearest[0] is None or nearest[0] > distance:
+                                        nearest[0] = distance
+                                        nearest[1] = toggeable_graph[0].graph.x_values[i]
+                                        nearest[2] = toggeable_graph[0].graph.y_values[i]
+
+                            if nearest[0] is not None:
+                                return True, nearest[1], nearest[2]
+        return False, 0, 0
 
     # Funciones que configuran y muestran los titulos de los ejes.
     def __fix_axes_titles_position__(self, widget):
