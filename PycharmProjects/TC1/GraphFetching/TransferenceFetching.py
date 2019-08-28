@@ -49,6 +49,7 @@ class TransferenceFetching(QWidget):
                 """ Estoy graficando Z input entonce calculo amplitud y fase distinto"""
                 amp = []
                 phase = []
+                print(den_list)
                 for k in freq:
                     real_num = 0
                     imaginary_num = 0
@@ -77,10 +78,10 @@ class TransferenceFetching(QWidget):
                         elif point % 4 == 0:
                             real_den += (2 * math.pi * k) ** i * den_list[point]
 
-                    print("frecuencia: ", k, " ", complex(real_num, imaginary_den))
+                    print("frecuencia: ", k, " ", complex(real_num, imaginary_num), complex(real_den, imaginary_den))
                     value = complex(real_num, imaginary_num)/complex(real_den, imaginary_den)
                     amp.append(math.sqrt(value.imag**2+value.real**2))
-                    phase.append(math.atan(value.imag/value.real))
+                    phase.append(math.degrees(math.atan(value.imag/value.real)))
             """ Sending the information to the GraphManager """
             module_graph = ToggleableGraph(GraphValues(label, freq.copy(), amp.copy(), GraphTypes.BodeModule),
                                            self.user_inerfase.parent.transferenceCheck.isChecked())

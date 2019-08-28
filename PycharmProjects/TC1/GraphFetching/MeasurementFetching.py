@@ -16,7 +16,7 @@ class MeasurementFetching(QDialog):
         loadUi("GraphFetching/inputType.ui", self.chose_type)
         self.select_name = QWidget()
         loadUi("GraphFetching/nombre.ui", self.select_name)
-
+        self.select_name.unit.addItem("dB")
         """ Callback to define which type of input we will receive """
         self.chose_type.finish.clicked.connect(self.__input_type__)
         self.select_name.finish.clicked.connect(self.chooser)
