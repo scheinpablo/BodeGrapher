@@ -49,12 +49,7 @@ class TransferenceFetching(QWidget):
                 """ Estoy graficando Z input entonce calculo amplitud y fase distinto"""
                 amp = []
                 phase = []
-                values = []
-                primer_cuad = 0
-                segundo_cuad = 0
-                tercer_cuad = 0
-                cuarto_cuad = 0
-
+                print("Coef unmerador: ", num_list, ", coef denom: ", den_list)
                 for k in freq:
                     real_num = 0
                     imaginary_num = 0
@@ -64,29 +59,30 @@ class TransferenceFetching(QWidget):
                     for i in range(len(num_list)):
                         point = len(num_list) - i - 1
                         if point % 4 == 3:
-                            imaginary_num -= (2 * math.pi * k) ** i * num_list[point]
+                            imaginary_num -= (2 * math.pi * k) ** point * num_list[i]
                         elif point % 4 == 2:
-                            real_num -= (2 * math.pi * k) ** i * num_list[point]
+                            real_num -= (2 * math.pi * k) ** point * num_list[i]
                         elif point % 4 == 1:
-                            imaginary_num += (2 * math.pi * k) ** i * num_list[point]
+                            imaginary_num += (2 * math.pi * k) ** point * num_list[i]
                         elif point % 4 == 0:
-                            real_num += (2 * math.pi * k) ** i * num_list[point]
+                            real_num += (2 * math.pi * k) ** point * num_list[i]
 
                     for i in range(len(den_list)):
                         point = len(den_list)-i-1
                         if point % 4 == 3:
-                            imaginary_den -= (2 * math.pi * k) ** i * den_list[point]
+                            imaginary_den -= (2 * math.pi * k) ** point * den_list[i]
                         elif point % 4 == 2:
-                            real_den -= (2 * math.pi * k) ** i * den_list[point]
+                            real_den -= (2 * math.pi * k) ** point * den_list[i]
                         elif point % 4 == 1:
-                            imaginary_den += (2 * math.pi * k) ** i * den_list[point]
+                            imaginary_den += (2 * math.pi * k) ** point * den_list[i]
                         elif point % 4 == 0:
-                            real_den += (2 * math.pi * k) ** i * den_list[point]
+                            real_den += (2 * math.pi * k) ** point * den_list[i]
 
                     value = complex(real_num, imaginary_num)/complex(real_den, imaginary_den)
-                    amp.append(math.sqrt(value.imag**2+value.real**2))
-                    """ Calculo la fase, medio bizarro """
-                    phase.append(math.degrees(math.atan2(value.imag, value.real)))
+
+                    amp.append(abs(value))
+                    phase.append(math.degrees(2*math.atan(value.imag/(abs(value)+value.real))))
+
 
             """ Sending the information to the GraphManager """
             module_graph = ToggleableGraph(GraphValues(label, freq.copy(), amp.copy(), GraphTypes.BodeModule),
@@ -97,7 +93,6 @@ class TransferenceFetching(QWidget):
                                           self.user_inerfase.parent.transferenceCheck.isChecked())
 
             self.user_inerfase.add_graphic(phase_graph, self.user_inerfase.transferenceKey, graph_color)
-
 
         except ValueError:
                 QMessageBox.warning(self, "Important", "Not numeric input", QMessageBox.Ok)
