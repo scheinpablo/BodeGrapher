@@ -69,7 +69,7 @@ class SpiceFetching(QWidget):
         if label == "":  # If no label is enter, a default one is generated
             label = "Graph " + str((len(self.window.graphicsToShow)+1))
         if self.unit.currentText() == "Ohm":
-            self.amp = [math.exp(i/10) for i in self.amp]
+            self.amp = [10**(i/20) for i in self.amp]
         color_graph = self.window.get_next_color()  # Color for the graphic is requested
 
         """ Loading the graphics to de GraphManager """
