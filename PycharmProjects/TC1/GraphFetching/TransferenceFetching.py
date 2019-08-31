@@ -45,23 +45,54 @@ class TransferenceFetching(QWidget):
 
             graph_color = self.user_inerfase.get_next_color()
 
+            if self.theorical_type.currentText() == "Z($)":
+                """ Estoy graficando Z input entonce calculo amplitud y fase distinto"""
+                amp = []
+                phase = []
+                print("Coef unmerador: ", num_list, ", coef denom: ", den_list)
+                for k in freq:
+                    real_num = 0
+                    imaginary_num = 0
+                    real_den = 0
+                    imaginary_den = 0
+
+                    for i in range(len(num_list)):
+                        point = len(num_list) - i - 1
+                        if point % 4 == 3:
+                            imaginary_num -= (2 * math.pi * k) ** point * num_list[i]
+                        elif point % 4 == 2:
+                            real_num -= (2 * math.pi * k) ** point * num_list[i]
+                        elif point % 4 == 1:
+                            imaginary_num += (2 * math.pi * k) ** point * num_list[i]
+                        elif point % 4 == 0:
+                            real_num += (2 * math.pi * k) ** point * num_list[i]
+
+                    for i in range(len(den_list)):
+                        point = len(den_list)-i-1
+                        if point % 4 == 3:
+                            imaginary_den -= (2 * math.pi * k) ** point * den_list[i]
+                        elif point % 4 == 2:
+                            real_den -= (2 * math.pi * k) ** point * den_list[i]
+                        elif point % 4 == 1:
+                            imaginary_den += (2 * math.pi * k) ** point * den_list[i]
+                        elif point % 4 == 0:
+                            real_den += (2 * math.pi * k) ** point * den_list[i]
+
+                    value = complex(real_num, imaginary_num)/complex(real_den, imaginary_den)
+
+                    amp.append(abs(value))
+                    phase.append(math.degrees(2*math.atan(value.imag/(abs(value)+value.real))))
+
+
+            """ Sending the information to the GraphManager """
+            module_graph = ToggleableGraph(GraphValues(label, freq.copy(), amp.copy(), GraphTypes.BodeModule),
+                                           self.user_inerfase.parent.transferenceCheck.isChecked())
+            self.user_inerfase.add_graphic(module_graph, self.user_inerfase.transferenceKey, graph_color)
+
             phase_graph = ToggleableGraph(GraphValues(label, freq.copy(), phase.copy(), GraphTypes.BodePhase),
                                           self.user_inerfase.parent.transferenceCheck.isChecked())
 
             self.user_inerfase.add_graphic(phase_graph, self.user_inerfase.transferenceKey, graph_color)
-
-            if self.theorical_type.currentText() == "H($)":
-                """ Sending the information to the GraphManager """
-                module_graph = ToggleableGraph(GraphValues(label, freq.copy(), amp.copy(), GraphTypes.BodeModule),
-                                               self.user_inerfase.parent.transferenceCheck.isChecked())
-                self.user_inerfase.add_graphic(module_graph, self.user_inerfase.transferenceKey, graph_color)
-
-            elif  self.theorical_type.currentText() == "Z($)":
-                impedance = [math.exp(i/20) for i in amp]
-                """ Sending the information to the GraphManager """
-                module_graph = ToggleableGraph(GraphValues(label, freq.copy(), impedance.copy(), GraphTypes.BodeModule),
-                                               self.user_inerfase.parent.transferenceCheck.isChecked())
-                self.user_inerfase.add_graphic(module_graph, self.user_inerfase.transferenceKey, graph_color)
 
         except ValueError:
                 QMessageBox.warning(self, "Important", "Not numeric input", QMessageBox.Ok)

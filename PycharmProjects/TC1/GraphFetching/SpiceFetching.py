@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.uic import loadUi
+import math
 
 from PycharmProjects.TC1.GraphStructures.GraphValues import GraphValues, GraphTypes
 from PycharmProjects.TC1.GraphStructures.ToggleableGraph import ToggleableGraph
@@ -17,7 +18,7 @@ class SpiceFetching(QWidget):
         self.phase = []
         """ Create de window from the UI file"""
         loadUi("GraphFetching/nombre.ui", self)
-
+        self.unit.addItems(["dB", "Ohm"])
         """ Link callback to analyze the information """
         self.finish.clicked.connect(self.process_data)
 
@@ -67,7 +68,8 @@ class SpiceFetching(QWidget):
 
         if label == "":  # If no label is enter, a default one is generated
             label = "Graph " + str((len(self.window.graphicsToShow)+1))
-
+        if self.unit.currentText() == "Ohm":
+            self.amp = [10**(i/20) for i in self.amp]
         color_graph = self.window.get_next_color()  # Color for the graphic is requested
 
         """ Loading the graphics to de GraphManager """
