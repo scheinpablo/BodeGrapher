@@ -18,6 +18,7 @@ class GraphWidget(QWidget):
 
         self.x_label = "Eje X"
         self.y_label = "Eje Y"
+        self.title = " "
         self.figure = Figure()
         self.canvas = FigureCanvas(self.figure)  # Canvas a agregar al widget
         self.toolbar = NavigationToolbar(self.canvas, self)  # cada gráfico tiene un toolbar con herramientos para
