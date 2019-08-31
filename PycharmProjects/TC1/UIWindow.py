@@ -148,7 +148,7 @@ class UIWindow(QMainWindow):
                                               , (x_point, y_point))  # Se agrega el label a cada punto
         if graph_widget.log_flag:
             graph_widget.canvas.axes.set_xscale('log')
-            graph_widget.canvas.axes.grid(True, which="both", ls="-")
+            graph_widget.canvas.axes.grid(True, which="both")
         else:
             graph_widget.canvas.axes.grid(self)
         graph_widget.canvas.draw()  # Se redibuja el grafico con los puntos-
@@ -167,7 +167,7 @@ class UIWindow(QMainWindow):
                                           color=color, label=graph.title)
         if graph_widget.log_flag:
             graph_widget.canvas.axes.set_xscale('log')
-            graph_widget.canvas.axes.grid(True, which="both", ls="-")
+            graph_widget.canvas.axes.grid(True, which="both")
         else:
             graph_widget.canvas.axes.grid(self)
 
