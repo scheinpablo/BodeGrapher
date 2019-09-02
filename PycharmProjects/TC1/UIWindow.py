@@ -36,7 +36,7 @@ class UIWindow(QMainWindow):
         self.medCheck.stateChanged.connect(self.graphManager.med_checked)
         self.ModuleWidget = self.graphwidget  # Objeto de la clase GraphWidget
         self.PhaseWidget = self.phaseGraph  # Objeto de la clase GraphWidget
-        self.ModuleWidget.title = "DC Sweep"
+        self.ModuleWidget.title = "Módulo"
         self.PhaseWidget.title = "Fase"
         self.ModuleWidget.canvas.axes.set_title(self.ModuleWidget.title)
         self.PhaseWidget.canvas.axes.set_title(self.PhaseWidget.title)
