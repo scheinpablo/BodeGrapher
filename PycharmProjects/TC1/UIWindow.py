@@ -128,12 +128,12 @@ class UIWindow(QMainWindow):
 
         puntos_a_descartar = []
         for i in range(len(graph_widget.x_marked_points)):  # Se itera cada punto
-            x_point = graph_widget.x_marked_points.x_values[i]
-            y_point = graph_widget.x_marked_points.y_values[i]
+            x_point = graph_widget.x_marked_points[i]
+            y_point = graph_widget.y_marked_points[i]
             what, x, y = self.__check_poit__(x_point, y_point, type)
             if what:
-                graph_widget.x_marked_points.x_values[i] = x
-                graph_widget.x_marked_points.y_values[i] = y
+                graph_widget.x_marked_points[i] = x
+                graph_widget.y_marked_points[i] = y
                 graph_widget.canvas.axes.plot(x,  # Se dibuja el punto en forma de X y en color rojo.
                                               y, color='red',
                                               markersize=8, marker='x')
@@ -141,7 +141,7 @@ class UIWindow(QMainWindow):
                 # Si el valor del punto es chico (entre -10 y 10) se utilizan 2 decimales para su label. Sino,
                 # ningún decimal.
                 if 10 > x > -10:
-                   x_text = str(round(x, 2))
+                    x_text = str(round(x, 2))
                 else:
                     x_text = str(int(round(x)))
 
@@ -199,9 +199,11 @@ class UIWindow(QMainWindow):
                         # activado
                         if toggeable_graph[0].graph.type == graphType:
                             nearest = [None, None, None]
+                            distance = 100000
                             for i in range(0, len(toggeable_graph[0].graph.x_values)):
-                                distance = (toggeable_graph[0].graph.x_values[i] - x)**2 +\
-                                           (toggeable_graph[0].graph.y_values[i] - y)**2
+                                if (((toggeable_graph[0].graph.x_values[i] - x) ** 2 + (toggeable_graph[0].graph.y_values[i] - y) ** 2) ** (1 / 2)) < distance:
+                                    distance = (((toggeable_graph[0].graph.x_values[i] - x) ** 2 +
+                                                (toggeable_graph[0].graph.y_values[i] - y) ** 2) ** (1 / 2))
                                 print(distance)
                                 if distance < 1000:
                                     print("SI")
