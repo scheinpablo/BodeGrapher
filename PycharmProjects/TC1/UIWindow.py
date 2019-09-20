@@ -116,47 +116,31 @@ class UIWindow(QMainWindow):
 
         # Se dibujan los puntos que fueron marcados por el usuario.
 
-        self.__plot_points__(self.PhaseWidget, GraphTypes.BodePhase)
+        self.__plot_points__(self.PhaseWidget)
 
-        self.__plot_points__(self.ModuleWidget, GraphTypes.BodeModule)
+        self.__plot_points__(self.ModuleWidget)
 
     # Función plot_points. Dibuja en pantalla los puntos que fueron marcados por el usuario en el grafico que
     # corresponda. Parametro, el grafico donde se desea actualizar el dibujo de los puntos
     # Esta función busca los puntos en graph_widget.x_marked_points y graph_widget.y_marked_points.
     # El agregado de puntos a estas variables se realiza directamente en graphwidget.py
     def __plot_points__(self, graph_widget, type):
-
-        puntos_a_descartar = []
         for i in range(len(graph_widget.x_marked_points)):  # Se itera cada punto
-            x_point = graph_widget.x_marked_points.x_values[i]
-            y_point = graph_widget.x_marked_points.y_values[i]
-            what, x, y = self.__check_poit__(x_point, y_point, type)
-            if what:
-                graph_widget.x_marked_points.x_values[i] = x
-                graph_widget.x_marked_points.y_values[i] = y
-                graph_widget.canvas.axes.plot(x,  # Se dibuja el punto en forma de X y en color rojo.
-                                              y, color='red',
-                                              markersize=8, marker='x')
+            x_point = graph_widget.x_marked_points[i]
+            y_point = graph_widget.y_marked_points[i]
+            graph_widget.canvas.axes.plot(x_point,  # Se dibuja el punto en forma de X y en color rojo.
+                                          y_point, color='red',
+                                          markersize=8, marker='x')
 
-                # Si el valor del punto es chico (entre -10 y 10) se utilizan 2 decimales para su label. Sino,
-                # ningún decimal.
-                if 10 > x > -10:
-                   x_text = str(round(x, 2))
-                else:
-                    x_text = str(int(round(x)))
-
-                if 10 > y > -10:
-                    y_text = str(round(y, 2))
-                else:
-                    y_text = str(int(round(y)))
-
-                graph_widget.canvas.axes.annotate("[" + x_text + "; " + y_text + "]"
-                                                  , (x, y))  # Se agrega el label a cada punto
+            # Si el valor del punto es chico (entre -10 y 10) se utilizan 2 decimales para su label. Sino,
+            # ningún decimal.
+            if 10 > x_point > -10:
+                x_text = str(round(x_point, 2))
             else:
-                puntos_a_descartar.append(i)  # indices de puntos inutiles
-        for j in puntos_a_descartar:
-            del graph_widget.x_marked_points.x_values[j]
-            del graph_widget.x_marked_points.y_values[j]
+                x_text = str(int(round(x_point)))
+        
+      graph_widget.canvas.axes.annotate("[" + x_text + "; " + y_text + "]"
+                                  , (x_point, y_point))  # Se agrega el label a cada punto
 
         if graph_widget.log_flag:
             graph_widget.canvas.axes.set_xscale('log')
