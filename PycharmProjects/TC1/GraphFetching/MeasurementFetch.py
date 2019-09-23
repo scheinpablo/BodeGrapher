@@ -47,6 +47,10 @@ class MeasurementFetching(QDialog):
             elif input_type == "Frecuencia | Amplitud | Fase":
                 self.type = False
                 ok = self.__process_all_data__()
+            elif input_type == "Frecuencia |  Vin | Vout | Fase":
+                self.type = False
+                ok = self.__process_all_data__()
+
             """ If the data was well loaded, the programs continue"""
             if ok:
                 filename = self.file.split('/').pop()
@@ -129,6 +133,32 @@ class MeasurementFetching(QDialog):
                 self.data["Frequency"].append(float("{0:.1f}".format(raw_data[0][i])))
                 _vin_vo_ = raw_data[2][i] / raw_data[1][i]
                 self.data["Amplitude"].append(20 * math.log(_vin_vo_, 10))
+            return True
+
+        except IOError:
+            QMessageBox.question(self.window.parent, "Important", "¿Seguro que existe el archivo?", QMessageBox.Yes)
+        except ValueError:
+            QMessageBox.warning(self.window.parent, "Important", "Formato inválido, revise el archivo", QMessageBox.Ok)
+        return False
+
+    def __more_work_thanks_Nico(self):
+        try:
+            raw_data = None
+            file, extension = self.file.split('.')
+
+            if extension == "xlsx" or extension == "xls":
+                raw_data = pd.read_excel(self.file, header=None, skiprows=21)
+            elif extension == "csv":
+                raw_data = pd.read_csv(self.file, header=None, skiprows=21)
+
+            if raw_data.shape[1] is not 4:  # Check if the number of columns is ok
+                raise ValueError
+
+            for i in range(0, len(raw_data)):
+                self.data["Frequency"].append(float("{0:.1f}".format(raw_data[0][i])))
+                amplitude = 20*math.log(float("{0:.1f}".format(raw_data[2][i]))/float("{0:.1f}".format(raw_data[1][i])))
+                self.data["Amplitude"].append(amplitude)
+                self.data["Phase"].append(float("{0:.1f}".format(raw_data[3][i])))
             return True
 
         except IOError:

@@ -48,6 +48,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Frecuencia |  Vin | Vout | Fase</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Frecuencia | Amplitud | Fase</string>
         </property>
        </item>
