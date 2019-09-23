@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.uic import loadUi
 import math
+import numpy as np
 
 from PycharmProjects.TC1.GraphStructures.GraphValues import GraphValues, GraphTypes
 from PycharmProjects.TC1.GraphStructures.ToggleableGraph import ToggleableGraph
@@ -32,7 +33,7 @@ class SpiceFetching(QWidget):
             if self.file:
                 filename = self.file.split('/').pop()
                 instruction = self.instruction.text()
-                instruction += " del archivo "+ filename
+                instruction += " del archivo " + filename
                 self.instruction.setText(instruction)
                 self.show()
 
@@ -53,6 +54,7 @@ class SpiceFetching(QWidget):
                 self.amp.append(float(amp_[:-2]))  # Eliminates the dB unit
                 self.phase.append(float(phase_))
             """ We closed the file after using it"""
+            self.check_unravel()    #checks if phase is discontinuous
             file.close()
             return True
         except IOError:
@@ -67,9 +69,9 @@ class SpiceFetching(QWidget):
         self.label.setText("")  # Cleaning the LineEdit for next time
 
         if label == "":  # If no label is enter, a default one is generated
-            label = "Graph " + str((len(self.window.graphicsToShow)+1))
+            label = "Graph " + str((len(self.window.graphicsToShow) + 1))
         if self.unit.currentText() == "Ohm":
-            self.amp = [10**(i/20) for i in self.amp]
+            self.amp = [10 ** (i / 20) for i in self.amp]
         color_graph = self.window.get_next_color()  # Color for the graphic is requested
 
         """ Loading the graphics to de GraphManager """
@@ -91,3 +93,22 @@ class SpiceFetching(QWidget):
         self.phase = []
 
         self.window.draw()  # Telling the GraphManager to be redraw
+
+    def check_unravel(self):
+        user_asked = False
+        limit_phase = True
+        diff = np.diff(self.phase)
+        for i in range(len(diff)):
+            if np.abs(diff[i]) > 340:
+                if not user_asked:
+                    reply = QMessageBox.question(self.window.parent, "Optional",
+                                                 "¿Quiere limitar la fase entre [-180;180]?",
+                                                 QMessageBox.Yes | QMessageBox.No)
+                    user_asked = True
+                    if reply == QMessageBox.Yes:
+                        limit_phase = False
+                if limit_phase:
+                    sign = np.sign(diff[i])  # indica si hay que sumar o restar 360. Si la diferencia es positiva,
+                    # hay que restar 360, sino sumar
+                    self.phase[i + 1:] = np.subtract(self.phase[i + 1:], sign * 360)
+                    diff = np.diff(self.phase)

@@ -46,9 +46,10 @@ class UIWindow(QMainWindow):
         self.PhaseWidget.redraw_callback = self.__update_graph__
 
     def delete_all(self):  # borra todos los graficos
-        self.graphManager.delete_button_graph()
         self.ModuleWidget.clear_marked_points()
         self.PhaseWidget.clear_marked_points()
+        self.graphManager.delete_button_graph()
+
         self.__update_graph__()
 
     def export_graphs(self):  # exporta los graficos a archivos png
@@ -129,11 +130,11 @@ class UIWindow(QMainWindow):
         puntos_a_descartar = []
         for i in range(len(graph_widget.x_marked_points)):  # Se itera cada punto
             x_point = graph_widget.x_marked_points[i]
-            y_point = graph_widget.x_marked_points.y_values[i]
+            y_point = graph_widget.y_marked_points[i]
             what, x, y = self.__check_poit__(x_point, y_point, type)
             if what:
-                graph_widget.x_marked_points.x_values[i] = x
-                graph_widget.x_marked_points.y_values[i] = y
+                graph_widget.x_marked_points[i] = x
+                graph_widget.y_marked_points[i] = y
                 graph_widget.canvas.axes.plot(x,  # Se dibuja el punto en forma de X y en color rojo.
                                               y, color='red',
                                               markersize=8, marker='x')
@@ -141,7 +142,7 @@ class UIWindow(QMainWindow):
                 # Si el valor del punto es chico (entre -10 y 10) se utilizan 2 decimales para su label. Sino,
                 # ningún decimal.
                 if 10 > x > -10:
-                   x_text = str(round(x, 2))
+                    x_text = str(round(x, 2))
                 else:
                     x_text = str(int(round(x)))
 
@@ -155,8 +156,8 @@ class UIWindow(QMainWindow):
             else:
                 puntos_a_descartar.append(i)  # indices de puntos inutiles
         for j in puntos_a_descartar:
-            del graph_widget.x_marked_points.x_values[j]
-            del graph_widget.x_marked_points.y_values[j]
+            del graph_widget.x_marked_points[j]
+            del graph_widget.y_marked_points[j]
 
         if graph_widget.log_flag:
             graph_widget.canvas.axes.set_xscale('log')
@@ -192,16 +193,19 @@ class UIWindow(QMainWindow):
 
     def __check_poit__(self, x, y, graphType):
         if len(self.graphics) > 0:  # Si hay graficos para mostrar
+            nearest = [None, None, None]
+            distance = 100000
             for graphList in self.graphics:  # Se itera por cada lista de gráficos (generalmente lista de 2
                 # valores, PhaseGraph y ModuleGraph)
                 for toggeable_graph in graphList:  # Se itera por cada gráfico
                     if toggeable_graph[0].activated:  # Chequea el flag de mostrar el gráfico en pantalla está
                         # activado
                         if toggeable_graph[0].graph.type == graphType:
-                            nearest = [None, None, None]
+
                             for i in range(0, len(toggeable_graph[0].graph.x_values)):
-                                distance = (toggeable_graph[0].graph.x_values[i] - x)**2 +\
-                                           (toggeable_graph[0].graph.y_values[i] - y)**2
+                                if (((toggeable_graph[0].graph.x_values[i] - x) ** 2 + (toggeable_graph[0].graph.y_values[i] - y) ** 2) ** (1 / 2)) < distance:
+                                    distance = (((toggeable_graph[0].graph.x_values[i] - x) ** 2 +
+                                                (toggeable_graph[0].graph.y_values[i] - y) ** 2) ** (1 / 2))
                                 print(distance)
                                 if distance < 1000:
                                     print("SI")
@@ -210,9 +214,9 @@ class UIWindow(QMainWindow):
                                         nearest[1] = toggeable_graph[0].graph.x_values[i]
                                         nearest[2] = toggeable_graph[0].graph.y_values[i]
 
-                            if nearest[0] is not None:
-                                return True, nearest[1], nearest[2]
-        return True, x, y
+            if nearest[0] is not None:
+                return True, nearest[1], nearest[2]
+        return False, 0, 0
 
     # Funciones que configuran y muestran los titulos de los ejes.
     def __fix_axes_titles_position__(self, widget):

@@ -1,6 +1,6 @@
-from PycharmProjects.TC1.GraphFetching.MeasurementFetching import MeasurementFetching
-from PycharmProjects.TC1.GraphFetching.SpiceFetching import SpiceFetching
-from PycharmProjects.TC1.GraphFetching.TransferenceFetching import TransferenceFetching
+from PycharmProjects.TC1.GraphFetching.MeasurementFetch import MeasurementFetching
+from PycharmProjects.TC1.GraphFetching.SpiceFetch import SpiceFetching
+from PycharmProjects.TC1.GraphFetching.TransferenceFetch import TransferenceFetching
 
 
 # Clase GraphManager. Es una clase que almacena, agrega y elimina los valores y propiedades de los gráficos que se deben
