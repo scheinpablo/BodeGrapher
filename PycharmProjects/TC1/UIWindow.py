@@ -128,7 +128,7 @@ class UIWindow(QMainWindow):
 
         puntos_a_descartar = []
         for i in range(len(graph_widget.x_marked_points)):  # Se itera cada punto
-            x_point = graph_widget.x_marked_points.x_values[i]
+            x_point = graph_widget.x_marked_points[i]
             y_point = graph_widget.x_marked_points.y_values[i]
             what, x, y = self.__check_poit__(x_point, y_point, type)
             if what:
@@ -212,7 +212,7 @@ class UIWindow(QMainWindow):
 
                             if nearest[0] is not None:
                                 return True, nearest[1], nearest[2]
-        return False, 0, 0
+        return True, x, y
 
     # Funciones que configuran y muestran los titulos de los ejes.
     def __fix_axes_titles_position__(self, widget):

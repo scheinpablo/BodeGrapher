@@ -36,7 +36,7 @@ class TransferenceFetching(QWidget):
             transfer = signal.lti(num_list, den_list)
             """ Getting the bode values """
             freq, amp, phase = transfer.bode()
-            freq = [(i / (2 * math.pi)) for i in freq]  # Converting from radians to hertz
+            # freq_ = [(i / (2 * math.pi)) for i in freq]  # Converting from radians to hertz
             """ Getting graph's name """
             label = self.labelName.text()
             self.labelName.setText("")
@@ -49,7 +49,6 @@ class TransferenceFetching(QWidget):
                 """ Estoy graficando Z input entonce calculo amplitud y fase distinto"""
                 amp = []
                 phase = []
-                print("Coef unmerador: ", num_list, ", coef denom: ", den_list)
                 for k in freq:
                     real_num = 0
                     imaginary_num = 0
@@ -140,5 +139,5 @@ class TransferenceFetching(QWidget):
 
         """ Writing the fraction in LaTex's style """
         equation = "$ \\frac{"+num_str+"}{"+den_str+"}$"
-        self.equation.figure.text(0.1, 0.8, equation, fontsize=10)
+        self.equation.figure.text(0.1, 0.3, equation, fontsize=10)
         self.equation.canvas.draw()
